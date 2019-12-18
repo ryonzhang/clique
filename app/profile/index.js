@@ -3,9 +3,7 @@ import {
   SafeAreaView,
   StyleSheet,
   View,
-  ScrollView,
   TouchableOpacity,
-  Dimensions,
   Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -14,6 +12,8 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import TabBar from 'react-native-underline-tabbar';
 import CompletedList from '../completed/list';
+import FavoriteInstitutionList from '../explorer/details/institution/list';
+import FriendsList from '../friend/list';
 const Profile = props => {
   const [user, setUser] = useState({});
   (async function() {
@@ -21,6 +21,12 @@ const Profile = props => {
     setUser(JSON.parse(data));
   })();
   const [index, setIndex] = React.useState(index);
+  const [numberOfCompletedList, setNumberOfCompletedList] = React.useState(0);
+  const [
+    numberOfFavorititeInstitutionList,
+    setNumberOfFavorititeInstitutionList,
+  ] = React.useState(0);
+  const [numberOfFriendList, setNumberOfFriendList] = React.useState(0);
 
   const Page = ({label}) => (
     <View style={styles.container}>
@@ -148,10 +154,24 @@ const Profile = props => {
             activeTabTextStyle={{color: '#53ac49'}}
           />
         )}>
-        <CompletedList tabLabel={{label: 'Previous', badge: 3}} />
-
-        <Page tabLabel={{label: 'Favorites', badge: 3}} />
-        <Page tabLabel={{label: 'Friends', badge: 3}} />
+        <CompletedList
+          tabLabel={{label: 'Previous', badge: numberOfCompletedList}}
+          onLoad={value => setNumberOfCompletedList(value)}
+        />
+        <FavoriteInstitutionList
+          tabLabel={{
+            label: 'Favorites',
+            badge: numberOfFavorititeInstitutionList,
+          }}
+          onLoad={value => setNumberOfFavorititeInstitutionList(value)}
+        />
+        <FriendsList
+          tabLabel={{
+            label: 'Favorites',
+            badge: numberOfFriendList,
+          }}
+          onLoad={value => setNumberOfFriendList(value)}
+        />
       </ScrollableTabView>
     </SafeAreaView>
   );

@@ -5,11 +5,51 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import {Input, Text, Divider, AirbnbRating} from 'react-native-elements';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
+import TabBar from 'react-native-underline-tabbar';
+import CompletedList from '../../completed/list';
+import FavoriteInstitutionList from '../details/institution/list';
+import FriendsList from '../../friend/list';
+import ExploreClassList from '../details/class/list';
+
+Date.prototype.addDays = function(days) {
+  var dat = new Date(this.valueOf());
+  dat.setDate(dat.getDate() + days);
+  return dat;
+};
+
+Date.getDaysInDays = function(days) {
+  var dates = [];
+  var currentDate = new Date();
+  var endDate = currentDate.addDays(days);
+
+  while (currentDate <= endDate) {
+    dates.push(currentDate);
+    currentDate = currentDate.addDays(1);
+  }
+  return dates;
+};
+
+Date.prototype.getLabel = function(days) {
+  if (days.indexOf(this) == 0) {
+    return 'Today';
+  } else if (days.indexOf(this) == 1) {
+    return 'Tomorrow';
+  } else {
+    return this.toLocaleDateString('en-us', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+};
 
 const List = props => {
+  const dates = Date.getDaysInDays(14);
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View>
@@ -111,123 +151,23 @@ const List = props => {
             borderBottomWidth: 1,
             borderBottomColor: '#ccc',
           }}>
-          <ScrollView horizontal={true}>
-            <View style={styles.dateHighlighted}>
-              <Text style={styles.dateItemHignlighted}>Today</Text>
-            </View>
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>Tomorrow</Text>
-            </View>
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>3 Dec</Text>
-            </View>
-
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>4 Dec</Text>
-            </View>
-
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>5 Dec</Text>
-            </View>
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>6 Dec</Text>
-            </View>
-
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>7 Dec</Text>
-            </View>
-          </ScrollView>
+          <ScrollableTabView
+            tabBarUnderlineColor="#53ac49"
+            tabBarActiveTextColor="#53ac49"
+            renderTabBar={() => (
+              <TabBar
+                underlineColor="#53ac49"
+                activeTabTextStyle={{color: '#53ac49'}}
+              />
+            )}>
+            {dates.map(date => (
+              <ExploreClassList
+                tabLabel={{label: date.getLabel(dates)}}
+                date={date}
+              />
+            ))}
+          </ScrollableTabView>
         </View>
-      </View>
-      <View>
-        <ScrollView>
-          <View
-            style={{
-              flexDirection: 'row',
-              borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 20,
-            }}>
-            <View style={{flex: 2, flexDirection: 'column'}}>
-              <Text>17:30</Text>
-              <Text style={styles.center_gray}>85</Text>
-              <Text style={styles.center_gray}>min</Text>
-            </View>
-            <View style={{flex: 8, flexDirection: 'column'}}>
-              <Text style={{fontSize: 17}} numberOfLines={1}>
-                Reformer Introduction + Weight Lifting
-              </Text>
-              <Text style={{color: '#999'}}>Pilates education Serangoon</Text>
-              <View style={{flexDirection: 'row'}}>
-                <AirbnbRating
-                  count={5}
-                  showRating={false}
-                  size={15}
-                  isDisabled={true}
-                />
-                <Text style={styles.center_gray}>4.0/5</Text>
-              </View>
-            </View>
-          </View>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 20,
-            }}>
-            <View style={{flex: 2, flexDirection: 'column'}}>
-              <Text>17:30</Text>
-              <Text style={styles.center_gray}>85</Text>
-              <Text style={styles.center_gray}>min</Text>
-            </View>
-            <View style={{flex: 8, flexDirection: 'column'}}>
-              <Text style={{fontSize: 17}} numberOfLines={1}>
-                Reformer Introduction + Weight Lifting
-              </Text>
-              <Text style={{color: '#999'}}>Pilates education Serangoon</Text>
-              <View style={{flexDirection: 'row'}}>
-                <AirbnbRating
-                  count={5}
-                  showRating={false}
-                  size={15}
-                  isDisabled={true}
-                />
-                <Text style={styles.center_gray}>4.0/5</Text>
-              </View>
-            </View>
-          </View>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 20,
-            }}>
-            <View style={{flex: 2, flexDirection: 'column'}}>
-              <Text>17:30</Text>
-              <Text style={styles.center_gray}>85</Text>
-              <Text style={styles.center_gray}>min</Text>
-            </View>
-            <View style={{flex: 8, flexDirection: 'column'}}>
-              <Text style={{fontSize: 17}} numberOfLines={1}>
-                Reformer Introduction + Weight Lifting
-              </Text>
-              <Text style={{color: '#999'}}>Pilates education Serangoon</Text>
-              <View style={{flexDirection: 'row'}}>
-                <AirbnbRating
-                  count={5}
-                  showRating={false}
-                  size={15}
-                  isDisabled={true}
-                />
-                <Text style={styles.center_gray}>4.0/5</Text>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
       </View>
     </SafeAreaView>
   );

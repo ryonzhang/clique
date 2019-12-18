@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, ActivityIndicator} from 'react-native';
-import {Text} from 'react-native-elements';
+import {StyleSheet, View, ActivityIndicator, ScrollView} from 'react-native';
+import {AirbnbRating, Text} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
-import colors from '../../common/assets/color/color';
-import {STATUS} from '../../common/constants';
-const CompletedList = props => {
-  const URL = 'http://127.0.0.1:3000/classinfos/completed';
+import colors from '../../../../common/assets/color/color';
+import {STATUS} from '../../../../common/constants';
+const ExploreClassList = props => {
+  const URL = 'http://127.0.0.1:3000/classinfos/date/' + props.date;
 
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,55 +25,54 @@ const CompletedList = props => {
           let data = await response.json();
           setClasses(data);
           setLoading(false);
-          props.onLoad(data.length);
         }
       })();
-    }, [props]),
+    }, [URL, props]),
   );
   if (!loading) {
     return (
-      <>
+      <ScrollView>
         {classes.map(classInfo => (
           <View
-            tabLabel={{label: 'Previous', badge: 3}}
             style={{
               flexDirection: 'row',
               borderWidth: 1,
               borderColor: '#ddd',
               padding: 20,
             }}>
-            <View style={{flex: 4, flexDirection: 'column'}}>
+            <View style={{flex: 2, flexDirection: 'column'}}>
               <Text>
                 {new Date(classInfo.time).toLocaleTimeString('en-us', {
                   hour: '2-digit',
                   minute: '2-digit',
                 })}
               </Text>
-
               <Text style={styles.center_gray}>
-                {classInfo.duration_in_min} min
+                {classInfo.duration_in_min}
               </Text>
-              <Text style={styles.center_gray}>
-                {new Date(classInfo.time).toLocaleDateString('en-us', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </Text>
+              <Text style={styles.center_gray}>min</Text>
             </View>
             <View style={{flex: 8, flexDirection: 'column'}}>
               <Text style={{fontSize: 17}} numberOfLines={1}>
                 {classInfo.name}
               </Text>
-              <Text
-                style={{fontSize: 14, paddingTop: 5, color: 'gray'}}
-                numberOfLines={1}>
-                {classInfo.institution.name}
-              </Text>
+              <Text style={{color: '#999'}}>{classInfo.institution.name}</Text>
+              <View style={{flexDirection: 'row'}}>
+                <AirbnbRating
+                  count={5}
+                  defaultRating={classInfo.institution.star_num}
+                  showRating={false}
+                  size={15}
+                  isDisabled={true}
+                />
+                <Text style={styles.center_gray}>
+                  {classInfo.institution.star_num}/5
+                </Text>
+              </View>
             </View>
           </View>
         ))}
-      </>
+      </ScrollView>
     );
   } else {
     return (
@@ -125,6 +124,10 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 0.18)',
     padding: 0,
   },
+  center_gray: {
+    paddingLeft: 10,
+    color: '#999',
+  },
 });
 
-export default CompletedList;
+export default ExploreClassList;

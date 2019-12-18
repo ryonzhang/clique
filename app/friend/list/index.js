@@ -5,10 +5,10 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../common/assets/color/color';
 import {STATUS} from '../../common/constants';
-const CompletedList = props => {
-  const URL = 'http://127.0.0.1:3000/classinfos/completed';
+const FriendsList = props => {
+  const URL = 'http://127.0.0.1:3000/users/friends';
 
-  const [classes, setClasses] = useState([]);
+  const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   useFocusEffect(
     React.useCallback(() => {
@@ -23,7 +23,7 @@ const CompletedList = props => {
           props.navigation.navigate('Login');
         } else {
           let data = await response.json();
-          setClasses(data);
+          setFriends(data);
           setLoading(false);
           props.onLoad(data.length);
         }
@@ -33,44 +33,17 @@ const CompletedList = props => {
   if (!loading) {
     return (
       <>
-        {classes.map(classInfo => (
+        {friends.map(friend => (
           <View
-            tabLabel={{label: 'Previous', badge: 3}}
             style={{
               flexDirection: 'row',
               borderWidth: 1,
               borderColor: '#ddd',
               padding: 20,
             }}>
-            <View style={{flex: 4, flexDirection: 'column'}}>
-              <Text>
-                {new Date(classInfo.time).toLocaleTimeString('en-us', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-
-              <Text style={styles.center_gray}>
-                {classInfo.duration_in_min} min
-              </Text>
-              <Text style={styles.center_gray}>
-                {new Date(classInfo.time).toLocaleDateString('en-us', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </Text>
-            </View>
-            <View style={{flex: 8, flexDirection: 'column'}}>
-              <Text style={{fontSize: 17}} numberOfLines={1}>
-                {classInfo.name}
-              </Text>
-              <Text
-                style={{fontSize: 14, paddingTop: 5, color: 'gray'}}
-                numberOfLines={1}>
-                {classInfo.institution.name}
-              </Text>
-            </View>
+            <Text style={{fontSize: 17}} numberOfLines={1}>
+              {friend.name}
+            </Text>
           </View>
         ))}
       </>
@@ -127,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CompletedList;
+export default FriendsList;

@@ -97,7 +97,7 @@ const AppNavigator = createDrawerNavigator(
     },
   },
   {
-    initialRouteName: 'Profile',
+    initialRouteName: 'Home',
     contentComponent: Drawer,
   },
 );
