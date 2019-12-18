@@ -1,21 +1,69 @@
 import React, {Component} from 'react';
-import {SafeAreaView, StyleSheet, View, ScrollView} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import {Text, Divider} from 'react-native-elements';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import TabBar from 'react-native-underline-tabbar';
+import CalendarClassList from './list';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
+Date.prototype.addDays = function(days) {
+  var dat = new Date(this.valueOf());
+  dat.setDate(dat.getDate() + days);
+  return dat;
+};
 
+Date.getDaysInDays = function(days) {
+  var dates = [];
+  var currentDate = new Date();
+  var endDate = currentDate.addDays(days);
+
+  while (currentDate <= endDate) {
+    dates.push(currentDate);
+    currentDate = currentDate.addDays(1);
+  }
+  return dates;
+};
+
+Date.prototype.getLabel = function(days) {
+  if (days.indexOf(this) == 0) {
+    return 'Today';
+  } else if (days.indexOf(this) == 1) {
+    return 'Tomorrow';
+  } else {
+    return this.toLocaleDateString('en-us', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+};
 const Calendar = props => {
+  const dates = Date.getDaysInDays(14);
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View>
         <View style={{flexDirection: 'row'}}>
-          <FontAwesome5Icon
-            name="arrow-left"
-            size={25}
-            style={{paddingLeft: 20, flex: 1}}
-            color={'black'}
-          />
+          <TouchableOpacity
+            onPress={() => {
+              console.log('ryon');
+              props.navigation.navigate('InstitutionDetail', {
+                id: props.navigation.state.params.id,
+              });
+            }}>
+            <FontAwesome5Icon
+              name="arrow-left"
+              size={25}
+              style={{paddingLeft: 20, flex: 1}}
+              color={'black'}
+            />
+          </TouchableOpacity>
           <Text style={{flex: 7, fontSize: 18, textAlign: 'center'}}>
-            Pilates education Serangoon
+            {props.navigation.state.params.name}
           </Text>
           <View style={{flex: 1, paddingRight: 5}}>
             <Text style={{fontSize: 18}}>50</Text>
@@ -27,96 +75,25 @@ const Calendar = props => {
         <View
           style={{
             flexDirection: 'row',
-            borderBottomWidth: 1,
-            borderBottomColor: '#ccc',
           }}>
-          <ScrollView horizontal={true}>
-            <View style={styles.dateHighlighted}>
-              <Text style={styles.dateItemHignlighted}>Today</Text>
-            </View>
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>Tomorrow</Text>
-            </View>
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>3 Dec</Text>
-            </View>
-
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>4 Dec</Text>
-            </View>
-
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>5 Dec</Text>
-            </View>
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>6 Dec</Text>
-            </View>
-
-            <View style={styles.dateDisabled}>
-              <Text style={styles.dateItemDisabled}>7 Dec</Text>
-            </View>
-          </ScrollView>
+          <ScrollableTabView
+            tabBarUnderlineColor="#53ac49"
+            tabBarActiveTextColor="#53ac49"
+            renderTabBar={() => (
+              <TabBar
+                underlineColor="#53ac49"
+                activeTabTextStyle={{color: '#53ac49'}}
+              />
+            )}>
+            {dates.map(date => (
+              <CalendarClassList
+                tabLabel={{label: date.getLabel(dates)}}
+                institution_id={props.navigation.state.params.id}
+                date={date}
+              />
+            ))}
+          </ScrollableTabView>
         </View>
-      </View>
-      <View>
-        <ScrollView>
-          <View
-            style={{
-              flexDirection: 'row',
-              borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 20,
-            }}>
-            <View style={{flex: 2, flexDirection: 'column'}}>
-              <Text>17:30</Text>
-              <Text style={styles.center_gray}>85</Text>
-              <Text style={styles.center_gray}>min</Text>
-            </View>
-            <View style={{flex: 8, flexDirection: 'column'}}>
-              <Text style={{fontSize: 17}} numberOfLines={1}>
-                Reformer Introduction + Weight Lifting
-              </Text>
-            </View>
-          </View>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 20,
-            }}>
-            <View style={{flex: 2, flexDirection: 'column'}}>
-              <Text>17:30</Text>
-              <Text style={styles.center_gray}>85</Text>
-              <Text style={styles.center_gray}>min</Text>
-            </View>
-            <View style={{flex: 8, flexDirection: 'column'}}>
-              <Text style={{fontSize: 17}} numberOfLines={1}>
-                Reformer Introduction + Weight Lifting
-              </Text>
-            </View>
-          </View>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 20,
-            }}>
-            <View style={{flex: 2, flexDirection: 'column'}}>
-              <Text>17:30</Text>
-              <Text style={styles.center_gray}>85</Text>
-              <Text style={styles.center_gray}>min</Text>
-            </View>
-            <View style={{flex: 8, flexDirection: 'column'}}>
-              <Text style={{fontSize: 17}} numberOfLines={1}>
-                Reformer Introduction + Weight Lifting
-              </Text>
-            </View>
-          </View>
-        </ScrollView>
       </View>
     </SafeAreaView>
   );

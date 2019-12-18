@@ -53,99 +53,21 @@ const Completed = props => {
             Completed Cliques
           </Text>
         </View>
-        <Overlay
-          isVisible={visible}
-          width={300}
-          height={480}
-          onBackdropPress={() => setVisible(false)}>
-          <View style={{flex: 1}}>
-            <Text h4>Nice to have you onboard!</Text>
-            <Card image={require('../common/assets/images/home.screen.1.jpeg')}>
-              <Text style={{marginBottom: 10, fontSize: 17}}>
-                {classInfo.name}
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  borderWidth: 1,
-                  borderColor: '#ddd',
-                  padding: 20,
-                  margin: 5,
-                }}>
-                <View
-                  style={{
-                    flex: 3,
-                    flexDirection: 'column',
-                    paddingHorizontal: 5,
-                  }}>
-                  <Text>
-                    {new Date(classInfo.time).toLocaleTimeString([], {
-                      timeStyle: 'short',
-                    })}
-                  </Text>
-                  <Text style={styles.center_gray}>
-                    {classInfo.duration_in_min}
-                  </Text>
-                  <Text style={styles.center_gray}>min</Text>
-                </View>
-                <View style={{flex: 8, flexDirection: 'column'}}>
-                  <Text style={{color: '#999'}}>
-                    {classInfo.institution && classInfo.institution.name}
-                  </Text>
-                  <View style={{flexDirection: 'row'}}>
-                    <AirbnbRating
-                      count={5}
-                      defaultRating={
-                        classInfo.institution && classInfo.institution.star_num
-                      }
-                      showRating={false}
-                      size={15}
-                      isDisabled={true}
-                    />
-                    <Text style={styles.center_gray}>
-                      {classInfo.institution && classInfo.institution.star_num}
-                      /5{' '}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <Button
-                title={'Confirm Cancellation'}
-                type="outline"
-                onPress={() => {
-                  const URL =
-                    'http://127.0.0.1:3000/classinfos/delink/' + classInfo.id;
-                  fetch(URL, {
-                    method: 'POST',
-                    headers: {
-                      Authorization:
-                        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxMDEsImV4cCI6MTU3NjA3OTYzNX0.AJriuvjqWQy-j2sD-s1p71d57Qe3Gdt3fzCmW5jA2tg',
-                      'Content-Type': 'application/json',
-                    },
-                  })
-                    .then(response => {
-                      if (response.status === 202) {
-                        setVisible(false);
-                      } else {
-                        console.log(response);
-                      }
-                    })
-                    .catch(error => {
-                      console.error(error);
-                    });
-                }}
-              />
-            </Card>
-          </View>
-        </Overlay>
         <View style={{flex: 7}}>
           <ScrollView style={{padding: 20}}>
             {classes.map(classInfo => (
               <Card
                 image={require('../common/assets/images/home.screen.1.jpeg')}>
-                <Text style={{marginBottom: 10, fontSize: 17}}>
-                  {classInfo.name}
-                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    props.navigation.navigate('ClassDetail', {
+                      id: classInfo.id,
+                    });
+                  }}>
+                  <Text style={{marginBottom: 10, fontSize: 17}}>
+                    {classInfo.name}
+                  </Text>
+                </TouchableOpacity>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -171,9 +93,17 @@ const Completed = props => {
                     <Text style={styles.center_gray}>min</Text>
                   </View>
                   <View style={{flex: 8, flexDirection: 'column'}}>
-                    <Text style={{color: '#999'}}>
-                      {classInfo.institution.name}
-                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        console.log('ryon');
+                        props.navigation.navigate('InstitutionDetail', {
+                          id: classInfo.institution.id,
+                        });
+                      }}>
+                      <Text style={{color: '#999'}}>
+                        {classInfo.institution.name}
+                      </Text>
+                    </TouchableOpacity>
                     <View style={{flexDirection: 'row'}}>
                       <AirbnbRating
                         count={5}

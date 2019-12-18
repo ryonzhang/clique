@@ -133,6 +133,7 @@ const InstitutionDetail = props => {
             containerStyle={{paddingBottom: 40}}
             onPress={() => {
               props.navigation.navigate('Calendar', {
+                name: institution.name,
                 id: institution.id,
               });
             }}

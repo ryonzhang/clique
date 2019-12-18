@@ -141,9 +141,16 @@ const Upcoming = props => {
             {classes.map(classInfo => (
               <Card
                 image={require('../common/assets/images/home.screen.1.jpeg')}>
-                <Text style={{marginBottom: 10, fontSize: 17}}>
-                  {classInfo.name}
-                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    props.navigation.navigate('ClassDetail', {
+                      id: classInfo.id,
+                    });
+                  }}>
+                  <Text style={{marginBottom: 10, fontSize: 17}}>
+                    {classInfo.name}
+                  </Text>
+                </TouchableOpacity>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -169,9 +176,16 @@ const Upcoming = props => {
                     <Text style={styles.center_gray}>min</Text>
                   </View>
                   <View style={{flex: 8, flexDirection: 'column'}}>
-                    <Text style={{color: '#999'}}>
-                      {classInfo.institution.name}
-                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        props.navigation.navigate('InstitutionDetail', {
+                          id: classInfo.institution.id,
+                        });
+                      }}>
+                      <Text style={{color: '#999'}}>
+                        {classInfo.institution.name}
+                      </Text>
+                    </TouchableOpacity>
                     <View style={{flexDirection: 'row'}}>
                       <AirbnbRating
                         count={5}
@@ -181,7 +195,7 @@ const Upcoming = props => {
                         isDisabled={true}
                       />
                       <Text style={styles.center_gray}>
-                        {classInfo.institution.star_num}/5{' '}
+                        {classInfo.institution.star_num}/5
                       </Text>
                     </View>
                   </View>

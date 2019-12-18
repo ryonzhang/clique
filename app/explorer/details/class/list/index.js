@@ -1,6 +1,13 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, ActivityIndicator, ScrollView} from 'react-native';
-import {AirbnbRating, Text} from 'react-native-elements';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import {AirbnbRating, Card, Text} from 'react-native-elements';
+import { StackActions, NavigationActions } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../../../common/assets/color/color';
@@ -33,44 +40,61 @@ const ExploreClassList = props => {
     return (
       <ScrollView>
         {classes.map(classInfo => (
-          <View
-            style={{
-              flexDirection: 'row',
-              borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 20,
+          <TouchableOpacity
+            onPress={() => {
+              const resetAction = StackActions.reset({
+                index: 1,
+                actions: [
+                  NavigationActions.navigate({ routeName: 'Explorer' }),
+                  NavigationActions.navigate({ routeName: 'ClassDetail' ,params: {
+                      id: classInfo.id,
+                    },
+                  }),
+                ],
+              });
+              props.navigation.dispatch(resetAction);
             }}>
-            <View style={{flex: 2, flexDirection: 'column'}}>
-              <Text>
-                {new Date(classInfo.time).toLocaleTimeString('en-us', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-              <Text style={styles.center_gray}>
-                {classInfo.duration_in_min}
-              </Text>
-              <Text style={styles.center_gray}>min</Text>
-            </View>
-            <View style={{flex: 8, flexDirection: 'column'}}>
-              <Text style={{fontSize: 17}} numberOfLines={1}>
-                {classInfo.name}
-              </Text>
-              <Text style={{color: '#999'}}>{classInfo.institution.name}</Text>
-              <View style={{flexDirection: 'row'}}>
-                <AirbnbRating
-                  count={5}
-                  defaultRating={classInfo.institution.star_num}
-                  showRating={false}
-                  size={15}
-                  isDisabled={true}
-                />
-                <Text style={styles.center_gray}>
-                  {classInfo.institution.star_num}/5
+            <View
+              style={{
+                flexDirection: 'row',
+                borderWidth: 1,
+                borderColor: '#ddd',
+                padding: 20,
+              }}>
+              <View style={{flex: 2, flexDirection: 'column'}}>
+                <Text>
+                  {new Date(classInfo.time).toLocaleTimeString('en-us', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </Text>
+                <Text style={styles.center_gray}>
+                  {classInfo.duration_in_min}
+                </Text>
+                <Text style={styles.center_gray}>min</Text>
+              </View>
+              <View style={{flex: 8, flexDirection: 'column'}}>
+                <Text style={{fontSize: 17}} numberOfLines={1}>
+                  {classInfo.name}
+                </Text>
+                <Text style={{color: '#999'}}>
+                  {classInfo.institution.name}
+                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <AirbnbRating
+                    count={5}
+                    defaultRating={classInfo.institution.star_num}
+                    showRating={false}
+                    size={15}
+                    isDisabled={true}
+                  />
+                  <Text style={styles.center_gray}>
+                    {classInfo.institution.star_num}/5
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     );
