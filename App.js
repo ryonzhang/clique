@@ -7,10 +7,18 @@
  */
 
 import React from 'react';
-import {StyleSheet, View, Text, StatusBar} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  StatusBar,
+  Icon,
+  TouchableOpacity,
+} from 'react-native';
 import {DrawerNavigatorItems} from 'react-navigation-drawer';
 import {createAppContainer} from 'react-navigation';
 import {createDrawerNavigator} from 'react-navigation-drawer';
+import {createStackNavigator} from 'react-navigation-stack';
 
 import Login from './app/starter/login';
 import Signup from './app/starter/signup';
@@ -32,30 +40,88 @@ import Drawer from './app/drawer';
 import Completed from './app/completed';
 import InstitutionEdit from './app/explorer/details/institution/edit';
 import ClassEdit from './app/explorer/details/class/edit';
+import ExploreClassList from './app/explorer/details/class/list';
+import {StackActions} from 'react-navigation';
 
 // Experiment
 import TabViewExample from './app/experiment/tab';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 
-const AppNavigator = createDrawerNavigator(
+const AppStackNavigator = createStackNavigator(
   {
+    ClassDetail: {
+      screen: ClassDetail,
+      navigationOptions: ({navigation}) => ({
+        headerLeft: (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.dispatch(
+                StackActions.pop({
+                  n: 1,
+                }),
+              )
+            }>
+            <FontAwesome5Icon
+              name="arrow-left"
+              size={25}
+              style={{paddingLeft: 20}}
+              color={'black'}
+            />
+          </TouchableOpacity>
+        ),
+        headerTitle: 'Class Detail',
+      }),
+    },
+    InstitutionDetail: {
+      screen: InstitutionDetail,
+      navigationOptions: ({navigation}) => ({
+        headerTitle: 'Institution Detail',
+      }),
+    },
+    Explorer: {
+      screen: List,
+      navigationOptions: {
+        header: null,
+      },
+    },
+    Home: {
+      screen: Home,
+    },
+    Map: {
+      screen: Map,
+    },
+    ExploreClassList: {
+      screen: ExploreClassList,
+    },
+  },
+  {
+    headerMode: 'screen',
+  },
+);
+
+const AppDrawerNavigator = createDrawerNavigator(
+  {
+    ExploreClassList: {
+      screen: ExploreClassList,
+    },
+    Stack: {
+      screen: AppStackNavigator,
+    },
+    Map: {
+      screen: Map,
+    },
+
     Home: {
       screen: Home,
     },
     Explorer: {
       screen: List,
     },
-    Map: {
-      screen: Map,
-    },
+
     Calendar: {
       screen: Calendar,
     },
-    ClassDetail: {
-      screen: ClassDetail,
-    },
-    InstitutionDetail: {
-      screen: InstitutionDetail,
-    },
+
     Login: {
       screen: Login,
     },
@@ -97,9 +163,9 @@ const AppNavigator = createDrawerNavigator(
     },
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Upcoming',
     contentComponent: Drawer,
   },
 );
 
-export default createAppContainer(AppNavigator);
+export default createAppContainer(AppDrawerNavigator);
