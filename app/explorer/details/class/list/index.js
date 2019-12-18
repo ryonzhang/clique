@@ -7,13 +7,29 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {AirbnbRating, Card, Text} from 'react-native-elements';
-import { StackActions, NavigationActions } from 'react-navigation';
+import {StackActions, NavigationActions} from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../../../common/assets/color/color';
 import {STATUS} from '../../../../common/constants';
 const ExploreClassList = props => {
-  const URL = 'http://127.0.0.1:3000/classinfos/date/' + props.date;
+  const URL =
+    'http://127.0.0.1:3000/classinfos/date/' +
+    props.date +
+    '?min_hour=' +
+    props.minHour +
+    '&max_hour=' +
+    props.maxHour +
+    '&min_distance=' +
+    props.minDistance +
+    '&max_distance=' +
+    props.maxDistance +
+    '&min_credit=' +
+    props.minCredit +
+    '&max_credit=' +
+    props.maxCredit +
+    '&class_name=' +
+    props.className;
 
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,8 +61,10 @@ const ExploreClassList = props => {
               const resetAction = StackActions.reset({
                 index: 1,
                 actions: [
-                  NavigationActions.navigate({ routeName: 'Explorer' }),
-                  NavigationActions.navigate({ routeName: 'ClassDetail' ,params: {
+                  NavigationActions.navigate({routeName: 'Explorer'}),
+                  NavigationActions.navigate({
+                    routeName: 'ClassDetail',
+                    params: {
                       id: classInfo.id,
                     },
                   }),

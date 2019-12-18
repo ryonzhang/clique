@@ -42,11 +42,9 @@ const ClassDetail = props => {
         let data = await response.json();
         setClassInfo(data);
         setLoading(false);
-
       }
     })();
   }, [URL, props.navigation, props.navigation.state.params.id]);
-
 
   if (!loading) {
     return (
