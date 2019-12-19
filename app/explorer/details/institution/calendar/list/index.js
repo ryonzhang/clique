@@ -1,10 +1,17 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, ActivityIndicator, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import {Text} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../.././../../common/assets/color/color';
 import {STATUS} from '../../../../../common/constants';
+import {NavigationActions, StackActions} from 'react-navigation';
 const CalendarClassList = props => {
   const URL =
     'http://127.0.0.1:3000/institutions/' +
@@ -37,31 +44,54 @@ const CalendarClassList = props => {
     return (
       <ScrollView>
         {classes.map(classInfo => (
-          <View
-            style={{
-              flexDirection: 'row',
-              borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 20,
+          <TouchableOpacity
+            onPress={() => {
+              const resetAction = StackActions.reset({
+                index: 1,
+                actions: [
+                  NavigationActions.navigate({
+                    routeName: 'Calendar',
+                    params: {
+                      id: props.institution_id,
+                      name: props.institution_name,
+                    },
+                  }),
+                  NavigationActions.navigate({
+                    routeName: 'ClassDetail',
+                    params: {
+                      id: classInfo.id,
+                    },
+                  }),
+                ],
+              });
+              props.navigation.dispatch(resetAction);
             }}>
-            <View style={{flex: 2, flexDirection: 'column'}}>
-              <Text>
-                {new Date(classInfo.time).toLocaleTimeString('en-us', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Text>
-              <Text style={styles.center_gray}>
-                {classInfo.duration_in_min}
-              </Text>
-              <Text style={styles.center_gray}>min</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                borderWidth: 1,
+                borderColor: '#ddd',
+                padding: 20,
+              }}>
+              <View style={{flex: 2, flexDirection: 'column'}}>
+                <Text>
+                  {new Date(classInfo.time).toLocaleTimeString('en-us', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </Text>
+                <Text style={styles.center_gray}>
+                  {classInfo.duration_in_min}
+                </Text>
+                <Text style={styles.center_gray}>min</Text>
+              </View>
+              <View style={{flex: 8, flexDirection: 'column'}}>
+                <Text style={{fontSize: 17}} numberOfLines={1}>
+                  {classInfo.name}
+                </Text>
+              </View>
             </View>
-            <View style={{flex: 8, flexDirection: 'column'}}>
-              <Text style={{fontSize: 17}} numberOfLines={1}>
-                {classInfo.name}
-              </Text>
-            </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     );

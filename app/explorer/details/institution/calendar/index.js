@@ -1,11 +1,5 @@
-import React, {Component} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import React from 'react';
+import {SafeAreaView, StyleSheet, View, TouchableOpacity} from 'react-native';
 import {Text, Divider} from 'react-native-elements';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import TabBar from 'react-native-underline-tabbar';
@@ -87,9 +81,11 @@ const Calendar = props => {
             )}>
             {dates.map(date => (
               <CalendarClassList
+                {...props}
                 tabLabel={{label: date.getLabel(dates)}}
                 institution_id={props.navigation.state.params.id}
                 date={date}
+                institution_name={props.navigation.state.params.name}
               />
             ))}
           </ScrollableTabView>

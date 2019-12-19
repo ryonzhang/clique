@@ -15,6 +15,7 @@ import {
   Image,
 } from 'react-native-elements';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import MapView, {Marker} from "react-native-maps";
 
 const Map = props => {
   return (
@@ -83,7 +84,27 @@ const Map = props => {
         </View>
         <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
       </View>
+      <MapView
+          style={{flex:1}}
+          region={{
+            latitude: 1,
+            longitude: 1,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}>
+        <Marker
+            coordinate={{
+              latitude: 1,
+              longitude: 1,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            title={'classInfo.institution.name'}
+            description={'classInfo.institution.general_info'}
+        />
+      </MapView>
       <View>
+
         <ScrollView>
           <View>
             <Card>

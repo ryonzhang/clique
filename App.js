@@ -86,9 +86,22 @@ const AppStackNavigator = createStackNavigator(
     },
     Home: {
       screen: Home,
+      navigationOptions: {
+        header: null,
+      },
     },
     Map: {
       screen: Map,
+      navigationOptions: {
+        header: null,
+      },
+    },
+
+    Calendar: {
+      screen: Calendar,
+      navigationOptions: {
+        header: null,
+      },
     },
     ExploreClassList: {
       screen: ExploreClassList,

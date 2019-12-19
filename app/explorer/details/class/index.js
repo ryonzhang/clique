@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
+  Dimensions,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -20,6 +21,7 @@ import colors from '../../../common/assets/color/color';
 import AsyncStorage from '@react-native-community/async-storage';
 import Divider from 'react-native-material-ui/src/Divider';
 import {LEVELS, STATUS} from '../../../common/constants';
+import MapView, {Marker} from 'react-native-maps';
 
 const ClassDetail = props => {
   const URL =
@@ -28,6 +30,7 @@ const ClassDetail = props => {
   const [classInfo, setClassInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
+  const {height, width} = Dimensions.get('window');
   useEffect(() => {
     (async function() {
       let response = await fetch(URL, {
@@ -230,11 +233,26 @@ const ClassDetail = props => {
             {classInfo.institution.province},{classInfo.institution.country},
             {classInfo.institution.zipcode}
           </Text>
-          <View style={{padding: 10}}>
-            <Image
-              source={require('../../../common/assets/images/class.detail.map.png')}
-              style={{height: 200}}
-            />
+          <View style={{padding: 10,alignSelf:'center'}}>
+            <MapView
+              style={{width: width * 0.8, height: 250}}
+              region={{
+                latitude: classInfo.institution.latitude,
+                longitude: classInfo.institution.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}>
+              <Marker
+                coordinate={{
+                  latitude: classInfo.institution.latitude,
+                  longitude: classInfo.institution.longitude,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+                title={classInfo.institution.name}
+                description={classInfo.institution.general_info}
+              />
+            </MapView>
           </View>
           <Divider />
           <Text style={styles.subtitle}>Preparation</Text>

@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Dimensions,
 } from 'react-native';
 import {
   Button,
@@ -19,6 +20,7 @@ import {
 import colors from '../../../common/assets/color/color';
 import Divider from 'react-native-material-ui/src/Divider';
 import {STATUS} from '../../../common/constants';
+import MapView, {Marker} from 'react-native-maps';
 
 const InstitutionDetail = props => {
   const URL =
@@ -26,6 +28,7 @@ const InstitutionDetail = props => {
   console.log(URL);
   const [institution, setInstitution] = useState({});
   const [loading, setLoading] = useState(true);
+  const {height, width} = Dimensions.get('window');
   useEffect(() => {
     (async function() {
       let response = await fetch(URL, {
@@ -116,11 +119,26 @@ const InstitutionDetail = props => {
             {institution.city},{institution.province},{institution.country},
             {institution.zipcode}
           </Text>
-          <View style={{padding: 10}}>
-            <Image
-              source={require('../../../common/assets/images/class.detail.map.png')}
-              style={{height: 200}}
-            />
+          <View style={{padding: 10, alignSelf: 'center'}}>
+            <MapView
+              style={{width: width * 0.8, height: 250}}
+              region={{
+                latitude: institution.latitude,
+                longitude: institution.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}>
+              <Marker
+                coordinate={{
+                  latitude: institution.latitude,
+                  longitude: institution.longitude,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+                title={institution.name}
+                description={institution.general_info}
+              />
+            </MapView>
           </View>
           <Divider />
           <Text style={styles.subtitle}>How to arrive?</Text>

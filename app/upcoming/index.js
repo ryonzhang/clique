@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {STATUS} from '../common/constants';
 import {useFocusEffect} from 'react-navigation-hooks';
+import MapView from 'react-native-maps';
 const Upcoming = props => {
   const URL = 'http://127.0.0.1:3000/classinfos/upcoming';
 
