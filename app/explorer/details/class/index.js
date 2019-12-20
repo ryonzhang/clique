@@ -233,7 +233,7 @@ const ClassDetail = props => {
             {classInfo.institution.province},{classInfo.institution.country},
             {classInfo.institution.zipcode}
           </Text>
-          <View style={{padding: 10,alignSelf:'center'}}>
+          <View style={{padding: 10, alignSelf: 'center'}}>
             <MapView
               style={{width: width * 0.8, height: 250}}
               region={{

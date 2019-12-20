@@ -29,6 +29,7 @@ import FriendsList from '../../friend/list';
 import ExploreClassList from '../details/class/list';
 import AsyncStorage from '@react-native-community/async-storage';
 import {STATUS} from '../../common/constants';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 Date.prototype.addDays = function(days) {
   var dat = new Date(this.valueOf());
@@ -179,7 +180,7 @@ const List = props => {
         </View>
       </Overlay>
       <View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{flexDirection: 'row', zIndex: 10, elevation: 7,}}>
           <TouchableOpacity
             style={{paddingLeft: 20, flex: 1}}
             onPress={() => {
@@ -190,7 +191,7 @@ const List = props => {
           <View style={{flex: 10, left: -8, top: -6}}>
             <Input
               leftIcon={{type: 'font-awesome', name: 'search'}}
-              placeholder="  Find a nearby class"
+              placeholder="Find a nearby class"
               inputContainerStyle={styles.input}
               containerStyle={styles.inputContainer}
               inputStyle={{paddingLeft: 10}}
@@ -198,14 +199,91 @@ const List = props => {
                 setClassName(value);
               }}
             />
-            <Input
-              leftIcon={{type: 'font-awesome', name: 'map-marker'}}
-              placeholder="  Singapore"
-              inputContainerStyle={styles.input}
-              containerStyle={styles.namingInput}
-              inputStyle={{paddingLeft: 20}}
-            />
+
+            <View
+              style={{
+                paddingHorizontal: 10,
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  borderColor: '#ccc',
+                  borderWidth: 1,
+                  paddingBottom: 3,
+                  borderRadius: 10,
+                }}>
+                <FontAwesome5Icon
+                  name="map-marker"
+                  size={23}
+                  style={{paddingTop: 6, paddingLeft: 15}}
+                />
+                <GooglePlacesAutocomplete
+                  styles={{
+                    container: {
+                      zIndex: 10,
+                      overflow: 'visible',
+                    },
+                    textInputContainer: {
+                      borderTopWidth: 0,
+                      borderBottomWidth: 0,
+                      height: 23,
+                      overflow: 'visible',
+                      backgroundColor: 'white',
+                      borderColor: 'white',
+                      borderRadius: 100,
+                    },
+                    textInput: {
+                      backgroundColor: 'transparent',
+                      fontSize: 15,
+                      lineHeight: 22.5,
+                      paddingBottom: 0,
+                     top:-9
+                    },
+
+                    listView: {
+                      position: 'absolute',
+                      top: 40,
+                      left: 10,
+                      right: 10,
+                      backgroundColor: 'white',
+                      borderRadius: 5,
+                      flex: 1,
+                      borderWidth:1,
+                      borderColor:'#ccc',
+                      elevation: 3,
+                      transform: [{'translate': [0,0, 1]}],
+                      zIndex:100
+                    },
+
+                    predefinedPlacesDescription: {
+                      color: '#1faadb'
+                    }
+
+                  }}
+                  enablePoweredByContainer={false}
+                  listViewDisplayed={false}
+                  placeholder="Singapore"
+                  minLength={2} // minimum length of text to search
+                  autoFocus={true}
+                  fetchDetails={true}
+                  onPress={(data, details = null) => {
+                    // 'details' is provided when fetchDetails = true
+                    console.log(data);
+                    console.log(details.geometry.location);
+                  }}
+
+                  query={{
+                    // available options: https://developers.google.com/places/web-service/autocomplete
+                    key: 'AIzaSyC9kfnV1Go-bY35xKYC3lCHgguM1Aqo28o',
+                    language: 'en', // language of the results
+                  }}
+                  nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                  debounce={200}
+                />
+              </View>
+            </View>
           </View>
+
           <View style={{flex: 1, paddingRight: 5}}>
             <Text style={{fontSize: 18}}>50</Text>
             <Text style={{fontSize: 8}}>credits</Text>
@@ -254,6 +332,8 @@ const List = props => {
         <View
           style={{
             flexDirection: 'row',
+            zIndex: 1,
+            elevation: 1,
           }}>
           <ScrollableTabView
             tabBarUnderlineColor="#53ac49"

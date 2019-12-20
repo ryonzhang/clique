@@ -42,6 +42,7 @@ import InstitutionEdit from './app/explorer/details/institution/edit';
 import ClassEdit from './app/explorer/details/class/edit';
 import ExploreClassList from './app/explorer/details/class/list';
 import {StackActions} from 'react-navigation';
+import GooglePlacesAutocomplete from 'react-native-google-places-autocomplete';
 
 // Experiment
 import TabViewExample from './app/experiment/tab';

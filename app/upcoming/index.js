@@ -7,12 +7,20 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {Text, Card, AirbnbRating, Button, Overlay} from 'react-native-elements';
+import {
+  Text,
+  Card,
+  AirbnbRating,
+  Button,
+  Overlay,
+  Input,
+} from 'react-native-elements';
 import colors from '../common/assets/color/color';
 import AsyncStorage from '@react-native-community/async-storage';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {STATUS} from '../common/constants';
 import {useFocusEffect} from 'react-navigation-hooks';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import MapView from 'react-native-maps';
 const Upcoming = props => {
   const URL = 'http://127.0.0.1:3000/classinfos/upcoming';
@@ -21,6 +29,14 @@ const Upcoming = props => {
   const [classInfo, setClassInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
+  const homePlace = {
+    description: 'Home',
+    geometry: {location: {lat: 48.8152937, lng: 2.4597668}},
+  };
+  const workPlace = {
+    description: 'Work',
+    geometry: {location: {lat: 48.8496818, lng: 2.2940881}},
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -44,6 +60,8 @@ const Upcoming = props => {
   if (!loading) {
     return (
       <SafeAreaView style={styles.mainContainer}>
+        <View style={{padding: 10}} />
+
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity
             onPress={() => {

@@ -5,7 +5,12 @@ import {
   ActivityIndicator,
   ScrollView,
   TouchableOpacity,
+  PermissionsAndroid,
+  ToastAndroid,
+  Button,
+  Platform,
 } from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
 import {AirbnbRating, Card, Text} from 'react-native-elements';
 import {StackActions, NavigationActions} from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
