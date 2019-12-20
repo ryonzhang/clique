@@ -180,7 +180,7 @@ const List = props => {
         </View>
       </Overlay>
       <View>
-        <View style={{flexDirection: 'row', zIndex: 10, elevation: 7,}}>
+        <View style={{flexDirection: 'row', zIndex: 10, elevation: 7}}>
           <TouchableOpacity
             style={{paddingLeft: 20, flex: 1}}
             onPress={() => {
@@ -237,7 +237,7 @@ const List = props => {
                       fontSize: 15,
                       lineHeight: 22.5,
                       paddingBottom: 0,
-                     top:-9
+                      top: -9,
                     },
 
                     listView: {
@@ -248,17 +248,16 @@ const List = props => {
                       backgroundColor: 'white',
                       borderRadius: 5,
                       flex: 1,
-                      borderWidth:1,
-                      borderColor:'#ccc',
+                      borderWidth: 1,
+                      borderColor: '#ccc',
                       elevation: 3,
-                      transform: [{'translate': [0,0, 1]}],
-                      zIndex:100
+                      transform: [{translate: [0, 0, 1]}],
+                      zIndex: 100,
                     },
 
                     predefinedPlacesDescription: {
-                      color: '#1faadb'
-                    }
-
+                      color: '#1faadb',
+                    },
                   }}
                   enablePoweredByContainer={false}
                   listViewDisplayed={false}
@@ -271,7 +270,6 @@ const List = props => {
                     console.log(data);
                     console.log(details.geometry.location);
                   }}
-
                   query={{
                     // available options: https://developers.google.com/places/web-service/autocomplete
                     key: 'AIzaSyC9kfnV1Go-bY35xKYC3lCHgguM1Aqo28o',

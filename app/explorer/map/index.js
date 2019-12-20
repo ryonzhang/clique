@@ -97,23 +97,21 @@ const Map = props => {
       </MapView>
 
       <GooglePlacesAutocomplete
-          styles={{
-
-              listView: {
-                  position: 'absolute',
-                  marginTop: 40,
-                  backgroundColor: 'white',
-                  elevation: 1
-              },
-
-          }}
-          enablePoweredByContainer={false}
+        styles={{
+          listView: {
+            position: 'absolute',
+            marginTop: 40,
+            backgroundColor: 'white',
+            elevation: 1,
+          },
+        }}
+        enablePoweredByContainer={false}
         listViewDisplayed={false}
         placeholder="Search"
         minLength={2} // minimum length of text to search
         autoFocus={true}
         fetchDetails={true}
-          zoomEnabled={true}
+        zoomEnabled={true}
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
           //console.log(details);
