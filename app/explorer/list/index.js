@@ -30,6 +30,9 @@ import ExploreClassList from '../details/class/list';
 import AsyncStorage from '@react-native-community/async-storage';
 import {STATUS} from '../../common/constants';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import {useFocusEffect} from 'react-navigation-hooks';
+import {hasLocationPermission} from '../../common/functions';
+import Geolocation from 'react-native-geolocation-service';
 
 Date.prototype.addDays = function(days) {
   var dat = new Date(this.valueOf());
@@ -71,9 +74,43 @@ const List = props => {
   const [maxCredit, setMaxCredit] = useState(30);
   const [minDistance, setMinDistance] = useState(0.0);
   const [maxDistance, setMaxDistance] = useState(30.0);
+  const [searchLat, setSearchLat] = useState(1.29027);
+  const [searchLng, setSearchLng] = useState(103.851959);
   const [minHour, setMinHour] = useState(0.0);
   const [maxHour, setMaxHour] = useState(24);
   const [className, setClassName] = useState('');
+
+  useFocusEffect(
+    React.useCallback(() => {
+      (async function() {
+        if (searchLng == 0 && searchLat == 0) {
+          const hasLocationPermissionValue = await hasLocationPermission();
+          //
+          if (!hasLocationPermissionValue) {
+            return;
+          }
+
+          await Geolocation.getCurrentPosition(
+            position => {
+              console.log(position);
+              setSearchLat(parseFloat(position.coords.latitude));
+              setSearchLng(parseFloat(position.coords.longitude));
+            },
+            error => {
+              error = error;
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 15000,
+              maximumAge: 10000,
+              distanceFilter: 50,
+              forceRequestLocation: true,
+            },
+          );
+        }
+      })();
+    }, [searchLat, searchLng]),
+  );
   return (
     <SafeAreaView style={styles.mainContainer}>
       <Overlay
@@ -267,8 +304,9 @@ const List = props => {
                   fetchDetails={true}
                   onPress={(data, details = null) => {
                     // 'details' is provided when fetchDetails = true
-                    console.log(data);
-                    console.log(details.geometry.location);
+                    //console.log(details);
+                    setSearchLat(parseFloat(details.geometry.location.lat));
+                    setSearchLng(parseFloat(details.geometry.location.lng));
                   }}
                   query={{
                     // available options: https://developers.google.com/places/web-service/autocomplete
@@ -354,6 +392,8 @@ const List = props => {
                 minCredit={minCredit}
                 maxCredit={maxCredit}
                 className={className}
+                longitude={searchLng}
+                latitude={searchLat}
               />
             ))}
           </ScrollableTabView>

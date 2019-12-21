@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useFocusEffect} from 'react-navigation-hooks';
 import {
   ActivityIndicator,
   Dimensions,
@@ -23,6 +24,12 @@ import Divider from 'react-native-material-ui/src/Divider';
 import {LEVELS, STATUS} from '../../../common/constants';
 import MapView, {Marker} from 'react-native-maps';
 
+Date.prototype.addMinutes = function(minutes) {
+  var dat = new Date(this.valueOf());
+  dat.setMinutes(dat.getMinutes() + minutes);
+  return dat;
+};
+
 const ClassDetail = props => {
   const URL =
     'http://127.0.0.1:3000/classinfos/' + props.navigation.state.params.id;
@@ -30,24 +37,72 @@ const ClassDetail = props => {
   const [classInfo, setClassInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
+  const [action, setAction] = useState('');
+  const [status, setStatus] = useState('');
+  const [btnContent, setBtnContent] = useState('');
   const {height, width} = Dimensions.get('window');
-  useEffect(() => {
-    (async function() {
-      let response = await fetch(URL, {
-        headers: {
-          Authorization: await AsyncStorage.getItem('@token'),
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.status === STATUS.UNPROCESSED_ENTITY) {
-        props.navigation.navigate('Login');
-      } else {
-        let data = await response.json();
-        setClassInfo(data);
-        setLoading(false);
-      }
-    })();
-  }, [URL, props.navigation, props.navigation.state.params.id]);
+  useFocusEffect(
+    React.useCallback(() => {
+      (async function() {
+        let response = await fetch(URL, {
+          headers: {
+            Authorization: await AsyncStorage.getItem('@token'),
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.status === STATUS.UNPROCESSED_ENTITY) {
+          props.navigation.navigate('Login');
+        } else {
+          let data = await response.json();
+          setClassInfo(data.classinfo);
+          setStatus(data.status);
+          switch (status) {
+            case 'booked':
+              setAction('Unbook this class');
+              break;
+            case 'missed':
+              setAction('Class has already started');
+              break;
+            case 'attended':
+              setAction('Thanks for joining, leave a comment?');
+              break;
+            case 'feedbacked':
+              setAction('Hope to see you again');
+              break;
+            case 'open':
+              setAction('Book this class');
+              break;
+          }
+          setLoading(false);
+        }
+      })();
+    }, [URL, props.navigation, status]),
+  );
+
+  const _onPressStatus = () => {
+    switch (status) {
+      case 'booked':
+        setVisible(true);
+        setBtnContent('Confirm Cancellation');
+        break;
+      case 'missed':
+        break;
+      case 'attended':
+        props.navigation.navigate('FeedbackClass', {
+          classinfo: classInfo,
+        });
+        break;
+      case 'feedbacked':
+        props.navigation.navigate('FeedbackClass', {
+          classinfo: classInfo,
+        });
+        break;
+      case 'open':
+        setVisible(true);
+        setBtnContent('Confirm Booking');
+        break;
+    }
+  };
 
   if (!loading) {
     return (
@@ -58,7 +113,6 @@ const ClassDetail = props => {
           height={480}
           onBackdropPress={() => setVisible(false)}>
           <View style={{flex: 1}}>
-            <Text h4>Nice to have you onboard!</Text>
             <Card
               image={require('../../../common/assets/images/home.screen.1.jpeg')}>
               <Text style={{marginBottom: 10, fontSize: 17}}>
@@ -76,17 +130,16 @@ const ClassDetail = props => {
                   style={{
                     flex: 3,
                     flexDirection: 'column',
-                    paddingHorizontal: 5,
                   }}>
                   <Text>
-                    {new Date(classInfo.time).toLocaleTimeString([], {
-                      timeStyle: 'short',
+                    {new Date(classInfo.time).toLocaleTimeString('en-GB', {
+                      hour: '2-digit',
+                      minute: '2-digit',
                     })}
                   </Text>
                   <Text style={styles.center_gray}>
-                    {classInfo.duration_in_min}
+                    {classInfo.duration_in_min} min
                   </Text>
-                  <Text style={styles.center_gray}>min</Text>
                 </View>
                 <View style={{flex: 8, flexDirection: 'column'}}>
                   <Text style={{color: '#999'}}>
@@ -107,11 +160,13 @@ const ClassDetail = props => {
                 </View>
               </View>
               <Button
-                title={'Confirm Booking'}
+                title={btnContent}
                 type="outline"
                 onPress={() => {
                   const URL =
-                    'http://127.0.0.1:3000/classinfos/link/' + classInfo.id;
+                    'http://127.0.0.1:3000/classinfos/' +
+                    (status === 'open' ? 'link/' : 'delink/') +
+                    classInfo.id;
                   (async function() {
                     let response = await fetch(URL, {
                       headers: {
@@ -120,7 +175,7 @@ const ClassDetail = props => {
                       },
                       method: 'POST',
                     });
-                    if (response.status === STATUS.CREATED) {
+                    if (response.status === STATUS.ACCEPTED) {
                       setVisible(false);
                       props.navigation.navigate('Upcoming', {
                         id: classInfo.id,
@@ -138,10 +193,7 @@ const ClassDetail = props => {
           source={require('../../../common/assets/images/explorer.detail.class.jpeg')}
           style={{height: 200}}
         />
-        <TouchableOpacity
-          onPress={() => {
-            setVisible(true);
-          }}>
+        <TouchableOpacity onPress={_onPressStatus}>
           <View style={{backgroundColor: 'rgba(14, 202, 168, 0.63)'}}>
             <Text
               style={{
@@ -150,15 +202,31 @@ const ClassDetail = props => {
                 color: 'blue',
                 alignSelf: 'center',
               }}>
-              Book this class
+              {action}
             </Text>
           </View>
         </TouchableOpacity>
         <ScrollView style={{padding: 14}}>
           <Text h3>{classInfo.name}</Text>
           <Text style={[styles.markedText, {paddingTop: 20}]}>
-            {new Date(classInfo.time).toLocaleString()} Monday 1 Dec,
-            17:30-18:55
+            {new Date(classInfo.time).toLocaleTimeString('en-GB', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}{' '}
+            -{' '}
+            {new Date(classInfo.time)
+              .addMinutes(classInfo.duration_in_min)
+              .toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            ,{' '}
+            {new Date(classInfo.time).toLocaleDateString('en-us', {
+              weekday: 'short',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })}
           </Text>
           <Text style={[styles.markedText, {paddingBottom: 20}]}>
             {classInfo.institution.name}
@@ -213,15 +281,22 @@ const ClassDetail = props => {
               size={15}
               isDisabled={true}
             />
+
             <Text style={{color: 'gray', paddingLeft: 10, top: 3}}>
               {classInfo.institution.star_num}/5 according to{' '}
               {classInfo.institution.feedback_count} feedbacks
             </Text>
           </View>
-
-          <Text style={[styles.mainText, {color: 'blue'}]}>
-            See all the feedbacks
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate('Feedback', {
+                institution: classInfo.institution,
+              });
+            }}>
+            <Text style={[styles.mainText, {color: 'blue'}]}>
+              See all the feedbacks
+            </Text>
+          </TouchableOpacity>
           <Divider />
           <Text style={styles.subtitle}>About the class</Text>
           <Text style={styles.mainText}>{classInfo.general_info}</Text>
@@ -346,6 +421,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.18)',
     padding: 0,
+  },
+  center_gray: {
+    color: '#999',
   },
 });
 

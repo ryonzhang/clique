@@ -7,7 +7,9 @@ import {
   StyleSheet,
   View,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
+import {useFocusEffect} from 'react-navigation-hooks';
 import {
   Button,
   Text,
@@ -29,23 +31,25 @@ const InstitutionDetail = props => {
   const [institution, setInstitution] = useState({});
   const [loading, setLoading] = useState(true);
   const {height, width} = Dimensions.get('window');
-  useEffect(() => {
-    (async function() {
-      let response = await fetch(URL, {
-        headers: {
-          Authorization: await AsyncStorage.getItem('@token'),
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.status === STATUS.UNPROCESSED_ENTITY) {
-        props.navigation.navigate('Login');
-      } else {
-        let data = await response.json();
-        setInstitution(data);
-        setLoading(false);
-      }
-    })();
-  }, [URL, props.navigation, props.navigation.state.params.id]);
+  useFocusEffect(
+    React.useCallback(() => {
+      (async function() {
+        let response = await fetch(URL, {
+          headers: {
+            Authorization: await AsyncStorage.getItem('@token'),
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.status === STATUS.UNPROCESSED_ENTITY) {
+          props.navigation.navigate('Login');
+        } else {
+          let data = await response.json();
+          setInstitution(data);
+          setLoading(false);
+        }
+      })();
+    }, [URL, props.navigation]),
+  );
   if (!loading) {
     return (
       <SafeAreaView style={styles.safeContainer}>
@@ -101,14 +105,20 @@ const InstitutionDetail = props => {
               isDisabled={true}
             />
             <Text style={{color: 'gray', paddingLeft: 10, top: 3}}>
-              {institution.star_num}/5 according to {institution.feedback_count}{' '}
+              {institution.star_num}/5 according to {institution.feedback_count}
               feedbacks
             </Text>
           </View>
-
-          <Text style={[styles.mainText, {color: 'blue'}]}>
-            See all the feedbacks
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate('Feedback', {
+                institution: institution,
+              });
+            }}>
+            <Text style={[styles.mainText, {color: 'blue'}]}>
+              See all the feedbacks
+            </Text>
+          </TouchableOpacity>
           <Divider />
           <Text style={styles.subtitle}>About us</Text>
           <Text style={styles.mainText}>{institution.general_info}</Text>

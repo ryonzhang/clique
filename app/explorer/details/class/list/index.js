@@ -34,7 +34,11 @@ const ExploreClassList = props => {
     '&max_credit=' +
     props.maxCredit +
     '&class_name=' +
-    props.className;
+    props.className +
+    '&longitude=' +
+    props.longitude +
+    '&latitude=' +
+    props.latitude;
 
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);

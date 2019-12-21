@@ -60,8 +60,6 @@ const Upcoming = props => {
   if (!loading) {
     return (
       <SafeAreaView style={styles.mainContainer}>
-        <View style={{padding: 10}} />
-
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity
             onPress={() => {
