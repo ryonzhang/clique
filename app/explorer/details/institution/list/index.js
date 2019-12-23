@@ -1,12 +1,19 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, ActivityIndicator} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import {Text, AirbnbRating} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../../../common/assets/color/color';
 import {STATUS} from '../../../../common/constants';
 const FavoriteInstitutionList = props => {
-  const URL = 'http://127.0.0.1:3000/institutions/favorites';
+  const URL =
+    'http://127.0.0.1:3000/institutions/favorites/' +
+    (props.user_id ? props.user_id : '');
 
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,36 +35,43 @@ const FavoriteInstitutionList = props => {
           props.onLoad(data.length);
         }
       })();
-    }, [props]),
+    }, [URL, props]),
   );
   if (!loading) {
     return (
       <>
         {institutions.map(institution => (
-          <View
-            tabLabel={{label: 'Previous', badge: 3}}
-            style={{
-              borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 20,
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate('InstitutionDetail', {
+                id: institution.id,
+              });
             }}>
-            <Text style={{fontSize: 17}} numberOfLines={1}>
-              {institution.name}
-            </Text>
-            <View style={{flexDirection: 'row'}}>
-              <AirbnbRating
-                count={5}
-                defaultRating={institution.star_num}
-                showRating={false}
-                size={15}
-                isDisabled={true}
-              />
-              <Text style={{color: 'gray', paddingLeft: 10, top: 3}}>
-                {institution.star_num}/5 according to{' '}
-                {institution.feedback_count} feedbacks
+            <View
+              tabLabel={{label: 'Previous', badge: 3}}
+              style={{
+                borderWidth: 1,
+                borderColor: '#ddd',
+                padding: 20,
+              }}>
+              <Text style={{fontSize: 17}} numberOfLines={1}>
+                {institution.name}
               </Text>
+              <View style={{flexDirection: 'row'}}>
+                <AirbnbRating
+                  count={5}
+                  defaultRating={institution.star_num}
+                  showRating={false}
+                  size={15}
+                  isDisabled={true}
+                />
+                <Text style={{color: 'gray', paddingLeft: 10, top: 3}}>
+                  {institution.star_num}/5 according to{' '}
+                  {institution.feedback_count} feedbacks
+                </Text>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </>
     );

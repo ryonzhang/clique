@@ -11,9 +11,9 @@ import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../common/assets/color/color';
 import {STATUS} from '../../common/constants';
 import {NavigationActions, StackActions} from 'react-navigation';
-const CompletedList = props => {
+const UpcomingList = props => {
   const URL =
-    'http://127.0.0.1:3000/classinfos/completed/' + (props.user_id || '');
+    'http://127.0.0.1:3000/classinfos/upcoming/' + (props.user_id || '');
 
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -157,4 +157,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CompletedList;
+export default UpcomingList;

@@ -44,6 +44,7 @@ import ExploreClassList from './app/explorer/details/class/list';
 import {StackActions} from 'react-navigation';
 import Feedback from './app/explorer/details/institution/feedback';
 import FeedbackClass from './app/explorer/details/class/feedback';
+import OthersProfile from './app/profile/others';
 import GooglePlacesAutocomplete from 'react-native-google-places-autocomplete';
 
 // Experiment
@@ -111,6 +112,15 @@ const AppStackNavigator = createStackNavigator(
     },
     Feedback: {
       screen: Feedback,
+    },
+    Profile: {
+      screen: Profile,
+      navigationOptions: {
+        header: null,
+      },
+    },
+    OthersProfile: {
+      screen: OthersProfile,
     },
     FeedbackClass: {
       screen: FeedbackClass,
@@ -185,6 +195,9 @@ const AppDrawerNavigator = createDrawerNavigator(
     },
     ClassEdit: {
       screen: ClassEdit,
+    },
+    OthersProfile: {
+      screen: OthersProfile,
     },
   },
   {

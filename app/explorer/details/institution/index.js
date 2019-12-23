@@ -19,6 +19,8 @@ import {
   Overlay,
   Card,
 } from 'react-native-elements';
+import * as Animatable from 'react-native-animatable';
+import Icon from 'react-native-vector-icons/AntDesign';
 import colors from '../../../common/assets/color/color';
 import Divider from 'react-native-material-ui/src/Divider';
 import {STATUS} from '../../../common/constants';
@@ -30,7 +32,10 @@ const InstitutionDetail = props => {
   console.log(URL);
   const [institution, setInstitution] = useState({});
   const [loading, setLoading] = useState(true);
+  const [liked, setLiked] = useState(true);
   const {height, width} = Dimensions.get('window');
+  const AnimatedIcon = Animatable.createAnimatableComponent(Icon);
+
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
@@ -44,7 +49,8 @@ const InstitutionDetail = props => {
           props.navigation.navigate('Login');
         } else {
           let data = await response.json();
-          setInstitution(data);
+          setInstitution(data.institution);
+          setLiked(data.liked);
           setLoading(false);
         }
       })();
@@ -57,6 +63,36 @@ const InstitutionDetail = props => {
           source={require('../../../common/assets/images/institution.detail.jpeg')}
           style={{height: 200}}
         />
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            (async function() {
+              const URL =
+                'http://127.0.0.1:3000/institutions/' +
+                (liked ? 'defan/' : 'fan/') +
+                institution.id;
+              let response = await fetch(URL, {
+                headers: {
+                  Authorization: await AsyncStorage.getItem('@token'),
+                  'Content-Type': 'application/json',
+                },
+                method: 'POST',
+              });
+              if (response.status === STATUS.UNPROCESSED_ENTITY) {
+                props.navigation.navigate('Login');
+              } else {
+                setLiked(!liked);
+              }
+            })();
+          }}
+          style={styles.icon}>
+          <AnimatedIcon
+            ref={this.handleSmallAnimatedIconRef}
+            name={liked ? 'heart' : 'hearto'}
+            color={liked ? colors.heartColor : colors.textPrimary}
+            size={30}
+          />
+        </TouchableOpacity>
 
         <ScrollView style={{padding: 14}}>
           <Text h3>{institution.name}</Text>
@@ -233,6 +269,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.18)',
     padding: 0,
+  },
+  icon: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
   },
 });
 

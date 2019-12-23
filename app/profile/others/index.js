@@ -6,21 +6,22 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+
 import {Text, Divider, Image} from 'react-native-elements';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import TabBar from 'react-native-underline-tabbar';
-import CompletedList from '../completed/list';
-import FavoriteInstitutionList from '../explorer/details/institution/list';
-import FriendsList from '../friend/list';
-const Profile = props => {
+import CompletedList from '../../completed/list';
+import FavoriteInstitutionList from '../../explorer/details/institution/list';
+import FriendsList from '../../friend/list';
+import Upcoming from '../../upcoming';
+import UpcomingList from '../../upcoming/list';
+const OthersProfile = props => {
   const [user, setUser] = useState({});
   (async function() {
-    let data = await AsyncStorage.getItem('@user');
-    setUser(JSON.parse(data));
+    setUser(props.navigation.state.params.user);
+    console.log(user);
   })();
-  const [index, setIndex] = React.useState(index);
   const [numberOfCompletedList, setNumberOfCompletedList] = React.useState(0);
   const [
     numberOfFavorititeInstitutionList,
@@ -30,16 +31,6 @@ const Profile = props => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity
-          style={{paddingLeft: 20, flex: 1}}
-          onPress={() => {
-            props.navigation.openDrawer();
-          }}>
-          <FontAwesome5Icon name="bars" size={25} color={'black'} />
-        </TouchableOpacity>
-      </View>
-
       <TouchableOpacity
         onPress={() => {
           props.navigation.navigate('Home');
@@ -62,7 +53,7 @@ const Profile = props => {
           </Text>
           <View style={{paddingTop: -10, paddingLeft: 20}}>
             <Image
-              source={require('../common/assets/images/dummy_profile.jpeg')}
+              source={require('../../common/assets/images/dummy_profile.jpeg')}
               style={{height: 100, width: 100}}
               borderRadius={100}
             />
@@ -70,72 +61,6 @@ const Profile = props => {
         </View>
       </TouchableOpacity>
 
-      <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
-
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingLeft: 20,
-          paddingRight: 20,
-          paddingTop: 10,
-        }}>
-        <Text style={{padding: 5, fontSize: 18, color: '#333'}}>
-          Start your free trial
-        </Text>
-        <FontAwesome5Icon
-          name="chevron-right"
-          size={16}
-          style={{paddingTop: 10}}
-          color={'gray'}
-          regular
-        />
-      </View>
-      <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
-      <TouchableOpacity
-        onPress={() => {
-          props.navigation.navigate('Settings');
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingLeft: 20,
-            paddingRight: 20,
-            paddingTop: 10,
-          }}>
-          <Text style={{padding: 5, fontSize: 18, color: '#333'}}>
-            Settings
-          </Text>
-          <FontAwesome5Icon
-            name="chevron-right"
-            size={16}
-            style={{paddingTop: 10}}
-            color={'gray'}
-            regular
-          />
-        </View>
-      </TouchableOpacity>
-      <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingLeft: 20,
-          paddingRight: 20,
-          paddingTop: 10,
-        }}>
-        <Text style={{padding: 5, fontSize: 18, color: '#333'}}>
-          Refer a friend
-        </Text>
-        <FontAwesome5Icon
-          name="chevron-right"
-          size={16}
-          style={{paddingTop: 10}}
-          color={'gray'}
-          regular
-        />
-      </View>
       <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
 
       <ScrollableTabView
@@ -149,27 +74,34 @@ const Profile = props => {
             activeTabTextStyle={{color: '#53ac49'}}
           />
         )}>
-        <CompletedList
-          {...props}
-          tabLabel={{label: 'Previous', badge: numberOfCompletedList}}
-          onLoad={value => setNumberOfCompletedList(value)}
-        />
-        <FavoriteInstitutionList
-          {...props}
-          tabLabel={{
-            label: 'Favorites',
-            badge: numberOfFavorititeInstitutionList,
-          }}
-          onLoad={value => setNumberOfFavorititeInstitutionList(value)}
-        />
-        <FriendsList
-          {...props}
-          tabLabel={{
-            label: 'Friends',
-            badge: numberOfFriendList,
-          }}
-          onLoad={value => setNumberOfFriendList(value)}
-        />
+        {user.is_previous_classes_visible && (
+          <CompletedList
+            user_id={user.id}
+            {...props}
+            tabLabel={{label: 'Previous', badge: numberOfCompletedList}}
+            onLoad={value => setNumberOfCompletedList(value)}
+          />
+        )}
+
+        {user.is_coming_classes_visible && (
+          <UpcomingList
+            user_id={user.id}
+            {...props}
+            tabLabel={{label: 'Upcoming', badge: numberOfCompletedList}}
+            onLoad={value => setNumberOfCompletedList(value)}
+          />
+        )}
+        {user.is_favorite_institutions_visible && (
+          <FavoriteInstitutionList
+            user_id={user.id}
+            {...props}
+            tabLabel={{
+              label: 'Favorites',
+              badge: numberOfFavorititeInstitutionList,
+            }}
+            onLoad={value => setNumberOfFavorititeInstitutionList(value)}
+          />
+        )}
       </ScrollableTabView>
     </SafeAreaView>
   );
@@ -268,4 +200,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Profile;
+export default OthersProfile;

@@ -1,13 +1,21 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, ActivityIndicator} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import {Text} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../common/assets/color/color';
 import {STATUS} from '../../common/constants';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 const FriendsList = props => {
-  const URL = 'http://127.0.0.1:3000/users/friends';
-
+  const URL =
+    'http://127.0.0.1:3000/users/friends/' +
+    (props.user_id ? props.user_id : '');
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   useFocusEffect(
@@ -28,24 +36,41 @@ const FriendsList = props => {
           props.onLoad(data.length);
         }
       })();
-    }, [props]),
+    }, [URL, props]),
   );
   if (!loading) {
     return (
       <>
-        {friends.map(friend => (
-          <View
-            style={{
-              flexDirection: 'row',
-              borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 20,
-            }}>
-            <Text style={{fontSize: 17}} numberOfLines={1}>
-              {friend.name}
-            </Text>
-          </View>
-        ))}
+        <ScrollView>
+          {friends.map(friend => (
+            <TouchableOpacity
+              onPress={() => {
+                props.navigation.navigate('OthersProfile', {
+                  user: friend,
+                });
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  borderWidth: 1,
+                  borderColor: '#ddd',
+                  padding: 20,
+                  justifyContent: 'space-between',
+                }}>
+                <Text style={{fontSize: 17}} numberOfLines={1}>
+                  {friend.name}
+                </Text>
+                <FontAwesome5Icon
+                  name="chevron-right"
+                  size={18}
+                  // style={{paddingTop: 10}}
+                  color={'black'}
+                  regular
+                />
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </>
     );
   } else {
