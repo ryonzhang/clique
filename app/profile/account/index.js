@@ -92,16 +92,14 @@ const Account = props => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   useFocusEffect(
-    React.useCallback(
-      React.useCallback(() => {
-        (async function() {
-          let data = await AsyncStorage.getItem('@user');
-          setUser(JSON.parse(data));
-          setLoading(false);
-          console.log(data);
-        })();
-      }, []),
-    ),
+    React.useCallback(() => {
+      (async function() {
+        let data = await AsyncStorage.getItem('@user');
+        setUser(JSON.parse(data));
+        setLoading(false);
+        console.log(data);
+      })();
+    }, []),
   );
   if (!loading) {
     return (

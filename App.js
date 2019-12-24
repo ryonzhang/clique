@@ -45,6 +45,7 @@ import {StackActions} from 'react-navigation';
 import Feedback from './app/explorer/details/institution/feedback';
 import FeedbackClass from './app/explorer/details/class/feedback';
 import OthersProfile from './app/profile/others';
+import UserSearch from './app/friend/searchable';
 import GooglePlacesAutocomplete from 'react-native-google-places-autocomplete';
 
 // Experiment
@@ -122,6 +123,9 @@ const AppStackNavigator = createStackNavigator(
     OthersProfile: {
       screen: OthersProfile,
     },
+    UserSearch: {
+      screen: UserSearch,
+    },
     FeedbackClass: {
       screen: FeedbackClass,
       navigationOptions: ({navigation}) => ({
@@ -136,6 +140,9 @@ const AppStackNavigator = createStackNavigator(
 
 const AppDrawerNavigator = createDrawerNavigator(
   {
+    UserSearch: {
+      screen: UserSearch,
+    },
     ExploreClassList: {
       screen: ExploreClassList,
     },

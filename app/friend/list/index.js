@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {Text} from 'react-native-elements';
+import {Button, Text} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../common/assets/color/color';
@@ -42,6 +42,15 @@ const FriendsList = props => {
     return (
       <>
         <ScrollView>
+          {props.user_id || (
+            <Button
+              title={'Add a friend'}
+              type="outline"
+              onPress={() => {
+                props.navigation.navigate('UserSearch');
+              }}
+            />
+          )}
           {friends.map(friend => (
             <TouchableOpacity
               onPress={() => {
