@@ -167,7 +167,7 @@ const Map = props => {
           await getInstitutions();
         }
       })();
-    }, [searchLng, searchLat]),
+    }, [searchLng, searchLat,minDistance,maxDistance]),
   );
   return (
     <SafeAreaView style={[StyleSheet.absoluteFillObject, styles.mainContainer]}>

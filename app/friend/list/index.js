@@ -56,7 +56,7 @@ const FriendsList = props => {
           }
         })();
       }
-    }, []),
+    }, [loading]),
   );
   if (!loading) {
     return (
@@ -105,7 +105,7 @@ const FriendsList = props => {
                         if (response.status === STATUS.UNPROCESSED_ENTITY) {
                           props.navigation.navigate('Login');
                         } else {
-                          let data = await response.json();
+                          setLoading(true);
                         }
                       }}>
                       <Text style={{color: 'green', paddingRight: 10}}>
@@ -126,7 +126,7 @@ const FriendsList = props => {
                         if (response.status === STATUS.UNPROCESSED_ENTITY) {
                           props.navigation.navigate('Login');
                         } else {
-                          let data = await response.json();
+                          setLoading(true);
                         }
                       }}>
                       <Text style={{color: 'gray', paddingRight: 10}}>
