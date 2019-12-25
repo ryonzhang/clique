@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState} from 'react';
 import {
   StyleSheet,
@@ -35,7 +36,7 @@ const UpcomingList = props => {
           props.onLoad(data.length);
         }
       })();
-    }, [URL, props]),
+    }, []),
   );
   if (!loading) {
     return (

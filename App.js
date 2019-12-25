@@ -208,7 +208,7 @@ const AppDrawerNavigator = createDrawerNavigator(
     },
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'InstitutionEdit',
     contentComponent: Drawer,
   },
 );

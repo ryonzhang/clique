@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useRef} from 'react';
 import {
   SafeAreaView,
@@ -130,13 +131,11 @@ const Map = props => {
     } else {
       let data = await response.json();
       setInstitutions(data);
-      console.log(data);
       setLoading(false);
     }
   };
   useFocusEffect(
     React.useCallback(() => {
-      console.log('pppppppp');
       (async function() {
         if (searchLng == 0 && searchLat == 0) {
           const hasLocationPermissionValue = await hasLocationPermission();
@@ -168,7 +167,7 @@ const Map = props => {
           await getInstitutions();
         }
       })();
-    }, [searchLng, searchLat, getInstitutions]),
+    }, [searchLng, searchLat]),
   );
   return (
     <SafeAreaView style={[StyleSheet.absoluteFillObject, styles.mainContainer]}>
@@ -287,7 +286,7 @@ const Map = props => {
           setSearchLng(parseFloat(details.geometry.location.lng));
           setLat(parseFloat(details.geometry.location.lat));
           setLong(parseFloat(details.geometry.location.lng));
-          console.log(details.geometry.location.lat);
+          console.log(details.address_components[5]);
         }}
         getDefaultValue={() => {
           return ''; // text input default value

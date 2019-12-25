@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
-  AsyncStorage,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -10,6 +9,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import {Text, AirbnbRating, Card, SearchBar} from 'react-native-elements';
 import colors from '../../common/assets/color/color';
@@ -64,8 +64,10 @@ const UserSearch = props => {
       let data = await response.json();
       console.log(data);
       // console.log(users);
-      if (data.users.length) {
+      if (offset) {
         setUsers([...users, ...data.users]);
+      } else {
+        setUsers([...data.users]);
       }
 
       setIntendingUsers([...intendingUsers, ...data.intending]);
@@ -76,30 +78,39 @@ const UserSearch = props => {
 
   useFocusEffect(
     React.useCallback(() => {
-      (async function() {
-        let data = await AsyncStorage.getItem('@user');
-        setUser(JSON.parse(data));
-        console.log(data);
-      })();
-      setOffset(0);
-      setUsers([]);
-      setIntendingUsers([]);
-      _loadMore();
-    }, [_loadMore]),
+      if (offset <= 10) {
+        (async function() {
+          let data = await AsyncStorage.getItem('@user');
+          setUser(JSON.parse(data));
+
+          // setUsers([]);
+          // setIntendingUsers([]);
+          await _loadMore();
+        })();
+      }
+    }, [offset, _loadMore]),
   );
   if (!loading) {
     return (
       <SafeAreaView style={styles.safeContainer}>
-        <Text h4 style={{alignSelf: 'center'}}>
-          {user.name}
-        </Text>
+        <View style={{alignSelf: 'flex-start', flexDirection: 'row'}}>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate('Profile');
+            }}>
+            <FontAwesome5Icon
+              name="arrow-left"
+              size={25}
+              style={{padding: 10}}
+              color={'black'}
+            />
+          </TouchableOpacity>
+        </View>
         <SearchBar
           placeholder="Type Here..."
           onChangeText={value => {
             setSearch(value);
             setOffset(0);
-            setUsers([]);
-            _loadMore();
           }}
           value={search}
         />
@@ -164,7 +175,7 @@ const UserSearch = props => {
               </Card>
             )}
             onEndReached={_loadMore}
-            onEndReachedThreshold={0.5}
+            onEndReachedThreshold={0.01}
             initialNumToRender={10}
             ListFooterComponent={_renderFooter}
           />
