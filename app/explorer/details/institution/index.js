@@ -25,6 +25,7 @@ import colors from '../../../common/assets/color/color';
 import Divider from 'react-native-material-ui/src/Divider';
 import {STATUS} from '../../../common/constants';
 import MapView, {Marker} from 'react-native-maps';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 
 const InstitutionDetail = props => {
   const URL =
@@ -34,10 +35,16 @@ const InstitutionDetail = props => {
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(true);
   const {height, width} = Dimensions.get('window');
+  const [user, setUser] = useState({});
   const AnimatedIcon = Animatable.createAnimatableComponent(Icon);
 
   useFocusEffect(
     React.useCallback(() => {
+      (async function() {
+        let data = await AsyncStorage.getItem('@user');
+        setUser(JSON.parse(data));
+        console.log(data);
+      })();
       (async function() {
         let response = await fetch(URL, {
           headers: {
@@ -63,36 +70,57 @@ const InstitutionDetail = props => {
           source={require('../../../common/assets/images/institution.detail.jpeg')}
           style={{height: 200}}
         />
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => {
-            (async function() {
-              const URL =
-                'http://127.0.0.1:3000/institutions/' +
-                (liked ? 'defan/' : 'fan/') +
-                institution.id;
-              let response = await fetch(URL, {
-                headers: {
-                  Authorization: await AsyncStorage.getItem('@token'),
-                  'Content-Type': 'application/json',
-                },
-                method: 'POST',
+        {user.role === 'consumer' && (
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              (async function() {
+                const URL =
+                  'http://127.0.0.1:3000/institutions/' +
+                  (liked ? 'defan/' : 'fan/') +
+                  institution.id;
+                let response = await fetch(URL, {
+                  headers: {
+                    Authorization: await AsyncStorage.getItem('@token'),
+                    'Content-Type': 'application/json',
+                  },
+                  method: 'POST',
+                });
+                if (response.status === STATUS.UNPROCESSED_ENTITY) {
+                  props.navigation.navigate('Login');
+                } else {
+                  setLiked(!liked);
+                }
+              })();
+            }}
+            style={styles.icon}>
+            <AnimatedIcon
+              ref={this.handleSmallAnimatedIconRef}
+              name={liked ? 'heart' : 'hearto'}
+              color={liked ? colors.heartColor : colors.textPrimary}
+              size={30}
+            />
+          </TouchableOpacity>
+        )}
+
+        {(user.role === 'partner' || user.role === 'admin') && (
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              props.navigation.navigate('InstitutionEdit', {
+                institution: institution,
               });
-              if (response.status === STATUS.UNPROCESSED_ENTITY) {
-                props.navigation.navigate('Login');
-              } else {
-                setLiked(!liked);
-              }
-            })();
-          }}
-          style={styles.icon}>
-          <AnimatedIcon
-            ref={this.handleSmallAnimatedIconRef}
-            name={liked ? 'heart' : 'hearto'}
-            color={liked ? colors.heartColor : colors.textPrimary}
-            size={30}
-          />
-        </TouchableOpacity>
+            }}
+            style={styles.icon}>
+            <FontAwesome5Icon
+              name="edit"
+              size={25}
+              style={{paddingTop: 10}}
+              color={'green'}
+              regular
+            />
+          </TouchableOpacity>
+        )}
 
         <ScrollView style={{padding: 14}}>
           <Text h3>{institution.name}</Text>

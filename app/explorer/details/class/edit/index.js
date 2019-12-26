@@ -46,30 +46,30 @@ const FocusedDatePicker = compose(
 )(DatePicker);
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .required('please! email?')
-    .email("well that's not an email"),
-  first_name: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-  last_name: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-  username: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
+  // email: Yup.string()
+  //   .required('please! email?')
+  //   .email("well that's not an email"),
+  // first_name: Yup.string()
+  //   .min(2, 'Too Short!')
+  //   .max(50, 'Too Long!')
+  //   .required('Required'),
+  // last_name: Yup.string()
+  //   .min(2, 'Too Short!')
+  //   .max(50, 'Too Long!')
+  //   .required('Required'),
+  // username: Yup.string()
+  //   .min(2, 'Too Short!')
+  //   .max(50, 'Too Long!')
+  //   .required('Required'),
 });
 
 const validate = (values, props /* only available when using withFormik */) => {
   const errors = {};
   try {
-    console.log(values.birthday && values.birthday > Date.now());
-    if (values.birthday && values.birthday > Date.now()) {
-      errors.birthday = 'You should be borned';
-    }
+    // console.log(values.birthday && values.birthday > Date.now());
+    // if (values.birthday && values.birthday > Date.now()) {
+    //   errors.birthday = 'You should be borned';
+    // }
     validationSchema.validateSync(values, {abortEarly: false});
   } catch (error) {
     return {...getErrorsFromValidationError(error), ...errors};
@@ -91,6 +91,9 @@ function getErrorsFromValidationError(validationError) {
 const ClassEdit = props => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
+  const [classInfo, setClass] = useState(
+    props.navigation.state.params.classInfo,
+  );
   useFocusEffect(
     React.useCallback(
       React.useCallback(() => {
@@ -125,10 +128,11 @@ const ClassEdit = props => {
           />
           <ScrollView>
             <Formik
-              initialValues={{}}
+              initialValues={classInfo}
               validate={validate}
               onSubmit={values => {
-                const URL = 'http://127.0.0.1:3000/users/update';
+                const URL =
+                  'http://127.0.0.1:3000/classinfos/update/' + classInfo.id;
                 (async function() {
                   let response = await fetch(URL, {
                     headers: {
@@ -139,8 +143,7 @@ const ClassEdit = props => {
                     method: 'POST',
                   });
                   if (response.status === STATUS.ACCEPTED) {
-                    await AsyncStorage.setItem('@user', JSON.stringify(values));
-                    setUser(values);
+                    setClass(values);
                     alert('Your account has been updated');
                   } else {
                     alert('Your account fails to be updated');

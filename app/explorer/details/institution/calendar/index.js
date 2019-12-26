@@ -1,10 +1,18 @@
-import React from 'react';
-import {SafeAreaView, StyleSheet, View, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  AsyncStorage,
+} from 'react-native';
 import {Text, Divider} from 'react-native-elements';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import TabBar from 'react-native-underline-tabbar';
 import CalendarClassList from './list';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
+import {useFocusEffect} from 'react-navigation-hooks';
+import {STATUS} from '../../../../common/constants';
 Date.prototype.addDays = function(days) {
   var dat = new Date(this.valueOf());
   dat.setDate(dat.getDate() + days);
@@ -37,6 +45,17 @@ Date.prototype.getLabel = function(days) {
   }
 };
 const Calendar = props => {
+  const [user, setUser] = useState({});
+
+  useFocusEffect(
+    React.useCallback(() => {
+      (async function() {
+        let data = await AsyncStorage.getItem('@user');
+        setUser(JSON.parse(data));
+        console.log(data);
+      })();
+    }, []),
+  );
   const dates = Date.getDaysInDays(14);
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -59,10 +78,31 @@ const Calendar = props => {
           <Text style={{flex: 7, fontSize: 18, textAlign: 'center'}}>
             {props.navigation.state.params.name}
           </Text>
-          <View style={{flex: 1, paddingRight: 5}}>
-            <Text style={{fontSize: 18}}>50</Text>
-            <Text style={{fontSize: 8}}>credits</Text>
-          </View>
+          {user.role === 'consumer' && (
+            <View style={{flex: 1, paddingRight: 5}}>
+              <Text style={{fontSize: 18}}>50</Text>
+              <Text style={{fontSize: 8}}>credits</Text>
+            </View>
+          )}
+          {(user.role === 'partner' || user.role === 'admin') && (
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => {
+                props.navigation.navigate('ClassEdit', {
+                  name: props.navigation.state.params.name,
+                  id: props.navigation.state.params.id,
+                });
+              }}
+              style={styles.icon}>
+              <FontAwesome5Icon
+                name="plus"
+                size={20}
+                style={{paddingRight: 10}}
+                color={'green'}
+                regular
+              />
+            </TouchableOpacity>
+          )}
         </View>
 
         <Divider style={{backgroundColor: 'gray', marginTop: 10}} />

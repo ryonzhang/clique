@@ -10,9 +10,9 @@ import {
 import {Text, Card, AirbnbRating, Button, Overlay} from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
-import colors from '../../common/assets/color/color';
+import colors from '../../../../common/assets/color/color';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {STATUS} from '../../common/constants';
+import {STATUS} from '../../../../common/constants';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 const FavoriteInstitutionList = props => {
   const URL = 'http://127.0.0.1:3000/institutions/favorites';

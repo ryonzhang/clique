@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useFocusEffect} from 'react-navigation-hooks';
+// import { FloatingAction } from "react-native-floating-action";
+import {Container, Header, View, Button, Icon, Fab} from 'native-base';
 import {
   ActivityIndicator,
   Dimensions,
@@ -7,10 +9,8 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  View,
 } from 'react-native';
 import {
-  Button,
   Text,
   Image,
   AirbnbRating,
@@ -32,12 +32,40 @@ Date.prototype.addMinutes = function(minutes) {
   return dat;
 };
 
+const actions = [
+  {
+    text: 'Accessibility',
+
+    name: 'bt_accessibility',
+    position: 2,
+  },
+  {
+    text: 'Language',
+
+    name: 'bt_language',
+    position: 1,
+  },
+  {
+    text: 'Location',
+
+    name: 'bt_room',
+    position: 3,
+  },
+  {
+    text: 'Video',
+
+    name: 'bt_videocam',
+    position: 4,
+  },
+];
+
 const ClassDetail = props => {
   const URL =
     'http://127.0.0.1:3000/classinfos/' + props.navigation.state.params.id;
   console.log(URL);
   const [classInfo, setClassInfo] = useState({});
   const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isQR, setIsQR] = useState(false);
   const [action, setAction] = useState('');
@@ -400,6 +428,32 @@ const ClassDetail = props => {
             {classInfo.additional_info}
           </Text>
         </ScrollView>
+        <Fab
+          active={active}
+          direction="up"
+          containerStyle={{}}
+          style={{backgroundColor: '#5067FF'}}
+          position="bottomRight"
+          onPress={() => {
+            setActive(!active);
+          }}>
+          <Icon name="share" />
+          <Button
+            style={{backgroundColor: '#34A34F'}}
+            onPress={() => {
+              props.navigation.navigate('ClassEdit', {
+                classInfo: classInfo,
+              });
+            }}>
+            <Icon name="logo-whatsapp" />
+          </Button>
+          <Button style={{backgroundColor: '#3B5998'}}>
+            <Icon name="logo-facebook" />
+          </Button>
+          <Button disabled style={{backgroundColor: '#DD5144'}}>
+            <Icon name="mail" />
+          </Button>
+        </Fab>
       </SafeAreaView>
     );
   } else {

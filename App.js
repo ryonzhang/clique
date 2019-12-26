@@ -48,6 +48,7 @@ import OthersProfile from './app/profile/others';
 import UserSearch from './app/friend/searchable';
 import GooglePlacesAutocomplete from 'react-native-google-places-autocomplete';
 import QRGen from './app/explorer/details/class/qr-gen';
+import Admin from './app/explorer/details/institution/admin';
 
 // Experiment
 import TabViewExample from './app/experiment/tab';
@@ -133,6 +134,12 @@ const AppStackNavigator = createStackNavigator(
         headerTitle: 'Feedback',
       }),
     },
+    Admin: {
+      screen: Admin,
+      navigationOptions: ({navigation}) => ({
+        headerTitle: 'Institution List',
+      }),
+    },
   },
   {
     headerMode: 'screen',
@@ -157,6 +164,7 @@ const AppDrawerNavigator = createDrawerNavigator(
     Home: {
       screen: Home,
     },
+
     Explorer: {
       screen: List,
     },
@@ -167,6 +175,9 @@ const AppDrawerNavigator = createDrawerNavigator(
 
     Login: {
       screen: Login,
+      navigationOptions: () => ({
+        drawerLockMode: 'locked-closed',
+      }),
     },
     ApplicationDetail: {
       screen: ApplicationDetail,
@@ -209,6 +220,12 @@ const AppDrawerNavigator = createDrawerNavigator(
     },
     QRGen: {
       screen: QRGen,
+    },
+    Admin: {
+      screen: Admin,
+      navigationOptions: ({navigation}) => ({
+        headerTitle: 'Institution List',
+      }),
     },
   },
   {

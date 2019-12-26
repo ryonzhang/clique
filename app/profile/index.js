@@ -14,12 +14,17 @@ import TabBar from 'react-native-underline-tabbar';
 import CompletedList from '../completed/list';
 import FavoriteInstitutionList from '../explorer/details/institution/list';
 import FriendsList from '../friend/list';
+import {useFocusEffect} from 'react-navigation-hooks';
 const Profile = props => {
   const [user, setUser] = useState({});
-  (async function() {
-    let data = await AsyncStorage.getItem('@user');
-    setUser(JSON.parse(data));
-  })();
+  useFocusEffect(
+    React.useCallback(() => {
+      (async () => {
+        let data = await AsyncStorage.getItem('@user');
+        setUser(JSON.parse(data));
+      })();
+    }, []),
+  );
   const [index, setIndex] = React.useState(index);
   const [numberOfCompletedList, setNumberOfCompletedList] = React.useState(0);
   const [

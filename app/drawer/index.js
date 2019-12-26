@@ -10,7 +10,7 @@ import Divider from 'react-native-material-ui/src/Divider';
 const Drawer = props => {
   const [user, setUser] = useState({});
   (async function() {
-    data = await AsyncStorage.getItem('@user');
+    let data = await AsyncStorage.getItem('@user');
     // eslint-disable-next-line no-undef
     if (!data) {
       props.navigation.navigate('Login');
@@ -38,6 +38,28 @@ const Drawer = props => {
         </Text>
       </View>
       <View style={{flex: 7}}>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate('Admin');
+            props.navigation.closeDrawer();
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+            }}>
+            <FontAwesome5Icon
+              name="calendar"
+              style={{width: 30}}
+              size={25}
+              onPress={() => props.navigation.toggleDrawer()}
+            />
+
+            <Text style={{fontSize: 20, paddingLeft: 50}}>Admin</Text>
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             props.navigation.navigate('Home');
@@ -169,6 +191,30 @@ const Drawer = props => {
             />
 
             <Text style={{fontSize: 20, paddingLeft: 50}}>Settings</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={async () => {
+            props.navigation.navigate('Login');
+            props.navigation.closeDrawer();
+            await AsyncStorage.removeItem('@token');
+            await AsyncStorage.removeItem('@user');
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+            }}>
+            <FontAwesome5Icon
+              name="sign-out-alt"
+              size={25}
+              style={{width: 30}}
+              onPress={() => props.navigation.toggleDrawer()}
+            />
+
+            <Text style={{fontSize: 20, paddingLeft: 50}}>Log out</Text>
           </View>
         </TouchableOpacity>
       </View>

@@ -46,30 +46,30 @@ const FocusedDatePicker = compose(
 )(DatePicker);
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .required('please! email?')
-    .email("well that's not an email"),
-  first_name: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-  last_name: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-  username: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
+  email: Yup.string(),
+  //   .required('please! email?')
+  //   .email("well that's not an email"),
+  // first_name: Yup.string()
+  //   .min(2, 'Too Short!')
+  //   .max(50, 'Too Long!')
+  //   .required('Required'),
+  // last_name: Yup.string()
+  //   .min(2, 'Too Short!')
+  //   .max(50, 'Too Long!')
+  //   .required('Required'),
+  // username: Yup.string()
+  //   .min(2, 'Too Short!')
+  //   .max(50, 'Too Long!')
+  //   .required('Required'),
 });
 
 const validate = (values, props /* only available when using withFormik */) => {
   const errors = {};
   try {
-    console.log(values.birthday && values.birthday > Date.now());
-    if (values.birthday && values.birthday > Date.now()) {
-      errors.birthday = 'You should be borned';
-    }
+    // console.log(values.birthday && values.birthday > Date.now());
+    // if (values.birthday && values.birthday > Date.now()) {
+    //   errors.birthday = 'You should be borned';
+    // }
     validationSchema.validateSync(values, {abortEarly: false});
   } catch (error) {
     return {...getErrorsFromValidationError(error), ...errors};
@@ -89,177 +89,168 @@ function getErrorsFromValidationError(validationError) {
 }
 
 const InstitutionEdit = props => {
-  const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
-  useFocusEffect(
-    React.useCallback(
-      React.useCallback(() => {
-        (async function() {
-          let data = await AsyncStorage.getItem('@user');
-          setUser(JSON.parse(data));
-          setLoading(false);
-          console.log(data);
-        })();
-      }, []),
-    ),
+  const [institution, setInstitution] = useState(
+    props.navigation.state.params.institution,
   );
-  if (!loading) {
-    return (
-      <SafeAreaView style={styles.mainContainer}>
-        <ScrollView>
-          <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('Settings');
-              }}>
-              <FontAwesome5Icon
-                name="arrow-left"
-                size={25}
-                style={{paddingLeft: 20}}
-                color={'black'}
-              />
-            </TouchableOpacity>
-            <Text style={{paddingHorizontal: 120, fontSize: 20}}>
-              Institution
-            </Text>
-          </View>
-          <Formik
-            initialValues={{}}
-            validate={validate}
-            onSubmit={values => {
-              const URL = 'http://127.0.0.1:3000/users/update';
-              (async function() {
-                let response = await fetch(URL, {
-                  headers: {
-                    Authorization: await AsyncStorage.getItem('@token'),
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(values),
-                  method: 'POST',
-                });
-                if (response.status === STATUS.ACCEPTED) {
-                  await AsyncStorage.setItem('@user', JSON.stringify(values));
-                  setUser(values);
-                  alert('Your account has been updated');
-                } else {
-                  alert('Your account fails to be updated');
-                }
-              })();
+  console.log(institution);
+  // if (!loading) {
+  return (
+    <SafeAreaView style={styles.mainContainer}>
+      <ScrollView>
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate('Settings');
             }}>
-            {({
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              values,
-              errors,
-              touched,
-            }) => (
-              <Form>
-                <MyInput
-                  label="Name"
-                  name="name"
-                  type="name"
-                  value={values.name}
-                  onChange={handleChange}
-                />
-                <MyInput
-                  label="About us"
-                  name="general_info"
-                  type="general_info"
-                  multiline={true}
-                  value={values.general_info}
-                  onChange={handleChange}
-                />
+            <FontAwesome5Icon
+              name="arrow-left"
+              size={25}
+              style={{paddingLeft: 20}}
+              color={'black'}
+            />
+          </TouchableOpacity>
+          <Text style={{paddingHorizontal: 120, fontSize: 20}}>
+            Institution
+          </Text>
+        </View>
+        <Formik
+          initialValues={institution}
+          validate={validate}
+          onSubmit={values => {
+            const URL =
+              'http://127.0.0.1:3000/institutions/update/' + institution.id;
+            (async function() {
+              let response = await fetch(URL, {
+                headers: {
+                  Authorization: await AsyncStorage.getItem('@token'),
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values),
+                method: 'POST',
+              });
+              if (response.status === STATUS.ACCEPTED) {
+                setInstitution(values);
+                alert('Your account has been updated');
+              } else {
+                alert('Your account fails to be updated');
+              }
+            })();
+          }}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
+            <Form>
+              <MyInput
+                label="Name"
+                name="name"
+                type="name"
+                value={values.name}
+                onChange={handleChange}
+              />
+              <MyInput
+                label="About us"
+                name="general_info"
+                type="general_info"
+                multiline={true}
+                value={values.general_info}
+                onChange={handleChange}
+              />
 
-                <MyInput
-                  label="Unit"
-                  name="unit"
-                  type="unit"
-                  value={values.unit}
-                  onChange={handleChange}
-                />
-                <MyInput
-                  label="Building"
-                  name="building"
-                  type="building"
-                  value={values.building}
-                  onChange={handleChange}
-                />
-                <MyInput
-                  label="Street"
-                  name="street"
-                  type="street"
-                  value={values.street}
-                  onChange={handleChange}
-                />
-                <MyInput
-                  label="City"
-                  name="city"
-                  type="city"
-                  value={values.city}
-                  onChange={handleChange}
-                />
-                <MyInput
-                  label="Province"
-                  name="province"
-                  type="province"
-                  value={values.province}
-                  onChange={handleChange}
-                />
-                <MyInput
-                  label="Country"
-                  name="country"
-                  type="country"
-                  value={values.country}
-                  onChange={handleChange}
-                />
-                <MyInput
-                  label="Zipcode"
-                  name="zipcode"
-                  type="zipcode"
-                  value={values.zipcode}
-                  onChange={handleChange}
-                />
-                <MyInput
-                  label="Longitude"
-                  name="longitude"
-                  type="longitude"
-                  value={values.longitude}
-                  onChange={handleChange}
-                />
-                <MyInput
-                  label="Latitude"
-                  name="latitude"
-                  type="latitude"
-                  value={values.latitude}
-                  onChange={handleChange}
-                />
-                <MyInput
-                  label="How to get there"
-                  name="location_instruction"
-                  type="location_instruction"
-                  multiline={true}
-                  value={values.location_instruction}
-                  onChange={handleChange}
-                />
-                <Button onPress={handleSubmit} title="SUBMIT" />
-              </Form>
-            )}
-          </Formik>
-        </ScrollView>
-      </SafeAreaView>
-    );
-  } else {
-    return (
-      <View style={[styles.container, styles.horizontal]}>
-        <ActivityIndicator
-          size="large"
-          color="#00ff00"
-          style={{alignSelf: 'center'}}
-        />
-      </View>
-    );
-  }
+              <MyInput
+                label="Unit"
+                name="unit"
+                type="unit"
+                value={values.unit}
+                onChange={handleChange}
+              />
+              <MyInput
+                label="Building"
+                name="building"
+                type="building"
+                value={values.building}
+                onChange={handleChange}
+              />
+              <MyInput
+                label="Street"
+                name="street"
+                type="street"
+                value={values.street}
+                onChange={handleChange}
+              />
+              <MyInput
+                label="City"
+                name="city"
+                type="city"
+                value={values.city}
+                onChange={handleChange}
+              />
+              <MyInput
+                label="Province"
+                name="province"
+                type="province"
+                value={values.province}
+                onChange={handleChange}
+              />
+              <MyInput
+                label="Country"
+                name="country"
+                type="country"
+                value={values.country}
+                onChange={handleChange}
+              />
+              <MyInput
+                label="Zipcode"
+                name="zipcode"
+                type="zipcode"
+                value={values.zipcode}
+                onChange={handleChange}
+              />
+              <MyInput
+                label="Longitude"
+                name="longitude"
+                type="longitude"
+                value={values.longitude}
+                onChange={handleChange}
+              />
+              <MyInput
+                label="Latitude"
+                name="latitude"
+                type="latitude"
+                value={values.latitude}
+                onChange={handleChange}
+              />
+              <MyInput
+                label="How to get there"
+                name="location_instruction"
+                type="location_instruction"
+                multiline={true}
+                value={values.location_instruction}
+                onChange={handleChange}
+              />
+              <Button onPress={handleSubmit} title="SUBMIT" />
+            </Form>
+          )}
+        </Formik>
+      </ScrollView>
+    </SafeAreaView>
+  );
+  // } else {
+  //   return (
+  //     <View style={[styles.container, styles.horizontal]}>
+  //       <ActivityIndicator
+  //         size="large"
+  //         color="#00ff00"
+  //         style={{alignSelf: 'center'}}
+  //       />
+  //     </View>
+  //   );
+  // }
 };
 
 const styles = StyleSheet.create({
