@@ -227,6 +227,12 @@ const AppDrawerNavigator = createDrawerNavigator(
         headerTitle: 'Institution List',
       }),
     },
+    InstitutionDetail: {
+      screen: InstitutionDetail,
+      navigationOptions: ({navigation}) => ({
+        headerTitle: 'Institution Detail',
+      }),
+    },
   },
   {
     initialRouteName: 'QRGen',
