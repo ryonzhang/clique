@@ -47,6 +47,7 @@ import FeedbackClass from './app/explorer/details/class/feedback';
 import OthersProfile from './app/profile/others';
 import UserSearch from './app/friend/searchable';
 import GooglePlacesAutocomplete from 'react-native-google-places-autocomplete';
+import QRGen from './app/explorer/details/class/qr-gen';
 
 // Experiment
 import TabViewExample from './app/experiment/tab';
@@ -206,9 +207,12 @@ const AppDrawerNavigator = createDrawerNavigator(
     OthersProfile: {
       screen: OthersProfile,
     },
+    QRGen: {
+      screen: QRGen,
+    },
   },
   {
-    initialRouteName: 'InstitutionEdit',
+    initialRouteName: 'QRGen',
     contentComponent: Drawer,
   },
 );

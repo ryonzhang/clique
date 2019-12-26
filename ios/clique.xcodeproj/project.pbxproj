@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* cliqueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* cliqueTests.m */; };
 		03B89059B7A64C6DA8FBCC96 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AEAE49DD5AB24154BB440CB7 /* Fontisto.ttf */; };

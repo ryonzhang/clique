@@ -23,6 +23,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Divider from 'react-native-material-ui/src/Divider';
 import {LEVELS, STATUS} from '../../../common/constants';
 import MapView, {Marker} from 'react-native-maps';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import QRCode from '../../../common/components/QRCode';
 
 Date.prototype.addMinutes = function(minutes) {
   var dat = new Date(this.valueOf());
@@ -37,12 +39,18 @@ const ClassDetail = props => {
   const [classInfo, setClassInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
+  const [isQR, setIsQR] = useState(false);
   const [action, setAction] = useState('');
   const [status, setStatus] = useState('');
   const [btnContent, setBtnContent] = useState('');
+  const [user, setUser] = useState({});
   const {height, width} = Dimensions.get('window');
   useFocusEffect(
     React.useCallback(() => {
+      (async function() {
+        let data = await AsyncStorage.getItem('@user');
+        setUser(JSON.parse(data));
+      })();
       (async function() {
         let response = await fetch(URL, {
           headers: {
@@ -80,6 +88,7 @@ const ClassDetail = props => {
   );
 
   const _onPressStatus = () => {
+    setIsQR(false);
     switch (status) {
       case 'booked':
         setVisible(true);
@@ -113,86 +122,122 @@ const ClassDetail = props => {
           height={480}
           onBackdropPress={() => setVisible(false)}>
           <View style={{flex: 1}}>
-            <Card
-              image={require('../../../common/assets/images/home.screen.1.jpeg')}>
-              <Text style={{marginBottom: 10, fontSize: 17}}>
-                {classInfo.name}
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  borderWidth: 1,
-                  borderColor: '#ddd',
-                  padding: 20,
-                  margin: 5,
-                }}>
+            {isQR || (
+              <Card
+                image={require('../../../common/assets/images/home.screen.1.jpeg')}>
+                <Text style={{marginBottom: 10, fontSize: 17}}>
+                  {classInfo.name}
+                </Text>
+
                 <View
                   style={{
-                    flex: 3,
-                    flexDirection: 'column',
+                    flexDirection: 'row',
+                    borderWidth: 1,
+                    borderColor: '#ddd',
+                    padding: 20,
+                    margin: 5,
                   }}>
-                  <Text>
-                    {new Date(classInfo.time).toLocaleTimeString('en-GB', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </Text>
-                  <Text style={styles.center_gray}>
-                    {classInfo.duration_in_min} min
-                  </Text>
-                </View>
-                <View style={{flex: 8, flexDirection: 'column'}}>
-                  <Text style={{color: '#999'}}>
-                    {classInfo.institution.name}
-                  </Text>
-                  <View style={{flexDirection: 'row'}}>
-                    <AirbnbRating
-                      count={5}
-                      defaultRating={classInfo.institution.star_num}
-                      showRating={false}
-                      size={15}
-                      isDisabled={true}
-                    />
+                  <View
+                    style={{
+                      flex: 3,
+                      flexDirection: 'column',
+                    }}>
+                    <Text>
+                      {new Date(classInfo.time).toLocaleTimeString('en-GB', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </Text>
                     <Text style={styles.center_gray}>
-                      {classInfo.institution.star_num}/5{' '}
+                      {classInfo.duration_in_min} min
                     </Text>
                   </View>
+                  <View style={{flex: 8, flexDirection: 'column'}}>
+                    <Text style={{color: '#999'}}>
+                      {classInfo.institution.name}
+                    </Text>
+                    <View style={{flexDirection: 'row'}}>
+                      <AirbnbRating
+                        count={5}
+                        defaultRating={classInfo.institution.star_num}
+                        showRating={false}
+                        size={15}
+                        isDisabled={true}
+                      />
+                      <Text style={styles.center_gray}>
+                        {classInfo.institution.star_num}/5{' '}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
-              </View>
-              <Button
-                title={btnContent}
-                type="outline"
-                onPress={() => {
-                  const URL =
-                    'http://127.0.0.1:3000/classinfos/' +
-                    (status === 'open' ? 'link/' : 'delink/') +
-                    classInfo.id;
-                  (async function() {
-                    let response = await fetch(URL, {
-                      headers: {
-                        Authorization: await AsyncStorage.getItem('@token'),
-                        'Content-Type': 'application/json',
-                      },
-                      method: 'POST',
-                    });
-                    if (response.status === STATUS.ACCEPTED) {
-                      setVisible(false);
-                      props.navigation.navigate('Upcoming', {
-                        id: classInfo.id,
+
+                <Button
+                  title={btnContent}
+                  type="outline"
+                  onPress={() => {
+                    const URL =
+                      'http://127.0.0.1:3000/classinfos/' +
+                      (status === 'open' ? 'link/' : 'delink/') +
+                      classInfo.id;
+                    (async function() {
+                      let response = await fetch(URL, {
+                        headers: {
+                          Authorization: await AsyncStorage.getItem('@token'),
+                          'Content-Type': 'application/json',
+                        },
+                        method: 'POST',
                       });
-                    } else {
-                      alert('Not link the class, contact us please');
-                    }
-                  })();
-                }}
-              />
-            </Card>
+                      if (response.status === STATUS.ACCEPTED) {
+                        setVisible(false);
+                        props.navigation.navigate('Upcoming', {
+                          id: classInfo.id,
+                        });
+                      } else {
+                        alert('Not link the class, contact us please');
+                      }
+                    })();
+                  }}
+                />
+              </Card>
+            )}
+
+            {isQR && (
+              <View
+                style={{
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  paddingLeft: 20,
+                  paddingTop: 50,
+                }}>
+                <QRCode
+                  value={user.id + ''}
+                  size={280}
+                  bgColor="green"
+                  fgColor="white"
+                />
+              </View>
+            )}
           </View>
         </Overlay>
         <Image
           source={require('../../../common/assets/images/explorer.detail.class.jpeg')}
           style={{height: 200}}
         />
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            setIsQR(true);
+            setVisible(true);
+          }}
+          style={styles.icon}>
+          <FontAwesome5Icon
+            name="qrcode"
+            size={25}
+            style={{paddingTop: 10}}
+            color={'green'}
+            regular
+          />
+        </TouchableOpacity>
         <TouchableOpacity onPress={_onPressStatus}>
           <View style={{backgroundColor: 'rgba(14, 202, 168, 0.63)'}}>
             <Text
@@ -424,6 +469,14 @@ const styles = StyleSheet.create({
   },
   center_gray: {
     color: '#999',
+  },
+  icon: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
   },
 });
 
