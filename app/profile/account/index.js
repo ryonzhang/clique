@@ -117,10 +117,7 @@ const Account = props => {
                 color={'black'}
               />
             </TouchableOpacity>
-            <Text style={{paddingHorizontal: 120, fontSize: 20}}>
-              {' '}
-              Account{' '}
-            </Text>
+            <Text style={{paddingHorizontal: 120, fontSize: 20}}>Account</Text>
           </View>
           <Formik
             initialValues={user}

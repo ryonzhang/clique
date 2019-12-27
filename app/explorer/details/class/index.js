@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useFocusEffect} from 'react-navigation-hooks';
 // import { FloatingAction } from "react-native-floating-action";
-import {Container, Header, View, Button, Icon, Fab} from 'native-base';
+import {Container, Header, View, Icon, Fab} from 'native-base';
 import {
   ActivityIndicator,
   Dimensions,
@@ -15,6 +15,7 @@ import {
   Image,
   AirbnbRating,
   Badge,
+  Button,
   Overlay,
   Card,
 } from 'react-native-elements';
@@ -408,7 +409,7 @@ const ClassDetail = props => {
           <Divider />
           <Text style={styles.subtitle}>When to arrive?</Text>
           <Text style={styles.mainText}>
-            {classInfo.duration_in_min} minutes before
+            {classInfo.arrival_ahead_in_min} minutes before
           </Text>
           <Divider />
           <Text style={styles.subtitle}>How to arrive?</Text>
@@ -445,13 +446,10 @@ const ClassDetail = props => {
                 classInfo: classInfo,
               });
             }}>
-            <Icon name="logo-whatsapp" />
+            <Icon name="edit" type={'AntDesign'} />
           </Button>
           <Button style={{backgroundColor: '#3B5998'}}>
-            <Icon name="logo-facebook" />
-          </Button>
-          <Button disabled style={{backgroundColor: '#DD5144'}}>
-            <Icon name="mail" />
+            <Icon name="qrcode" type={'AntDesign'} />
           </Button>
         </Fab>
       </SafeAreaView>

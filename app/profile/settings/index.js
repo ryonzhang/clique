@@ -17,7 +17,7 @@ const Settings = props => {
     setUser(JSON.parse(data));
   })();
   return (
-    <>
+    <SafeAreaView style={styles.mainContainer}>
       <Header
         containerStyle={{
           backgroundColor: 'white',
@@ -34,102 +34,99 @@ const Settings = props => {
         }
         centerComponent={<Text style={{fontSize: 20}}>Settings</Text>}
       />
-      <SafeAreaView style={styles.mainContainer}>
-        <View>
-          <Text h4 style={{padding: 20}}>
-            Account
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate('Account');
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                paddingLeft: 20,
-                paddingRight: 20,
-                paddingTop: 10,
-              }}>
-              <View>
-                <Text style={{fontSize: 18, color: '#333'}}>{user.name}</Text>
-                <Text style={{fontSize: 14, color: '#999'}}>{user.email}</Text>
-                <Text style={{fontSize: 14, color: '#999'}}>
-                  {user.username}
-                </Text>
-              </View>
 
-              <FontAwesome5Icon
-                name="chevron-right"
-                size={16}
-                style={{paddingTop: 10}}
-                color={'gray'}
-                regular
-              />
-            </View>
-          </TouchableOpacity>
-          <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate('Confidentiality');
+      <View>
+        <Text h4 style={{padding: 20}}>
+          Account
+        </Text>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate('Account');
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingLeft: 20,
+              paddingRight: 20,
+              paddingTop: 10,
             }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                paddingLeft: 20,
-                paddingRight: 20,
-                paddingTop: 10,
-              }}>
-              <View>
-                <Text h4>Preferences</Text>
-                <Text style={{fontSize: 18, color: '#333', paddingTop: 10}}>
-                  Confidentialities
-                </Text>
-              </View>
-
-              <FontAwesome5Icon
-                name="chevron-right"
-                size={16}
-                style={{paddingTop: 10, alignSelf: 'center'}}
-                color={'gray'}
-                regular
-              />
+            <View>
+              <Text style={{fontSize: 18, color: '#333'}}>{user.name}</Text>
+              <Text style={{fontSize: 14, color: '#999'}}>{user.email}</Text>
+              <Text style={{fontSize: 14, color: '#999'}}>{user.username}</Text>
             </View>
-          </TouchableOpacity>
-          <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate('Confidentiality');
+
+            <FontAwesome5Icon
+              name="chevron-right"
+              size={16}
+              style={{paddingTop: 10}}
+              color={'gray'}
+              regular
+            />
+          </View>
+        </TouchableOpacity>
+        <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate('Confidentiality');
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingLeft: 20,
+              paddingRight: 20,
+              paddingTop: 10,
             }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                paddingLeft: 20,
-                paddingRight: 20,
-                paddingTop: 10,
-              }}>
-              <View>
-                <Text h4>Subscription</Text>
-                <Text style={{fontSize: 18, color: '#333', paddingTop: 10}}>
-                  Become a member
-                </Text>
-              </View>
-
-              <FontAwesome5Icon
-                name="chevron-right"
-                size={16}
-                style={{paddingTop: 10, alignSelf: 'center'}}
-                color={'gray'}
-                regular
-              />
+            <View>
+              <Text h4>Preferences</Text>
+              <Text style={{fontSize: 18, color: '#333', paddingTop: 10}}>
+                Confidentialities
+              </Text>
             </View>
-          </TouchableOpacity>
-          <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
-        </View>
-      </SafeAreaView>
-    </>
+
+            <FontAwesome5Icon
+              name="chevron-right"
+              size={16}
+              style={{paddingTop: 10, alignSelf: 'center'}}
+              color={'gray'}
+              regular
+            />
+          </View>
+        </TouchableOpacity>
+        <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate('Confidentiality');
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingLeft: 20,
+              paddingRight: 20,
+              paddingTop: 10,
+            }}>
+            <View>
+              <Text h4>Subscription</Text>
+              <Text style={{fontSize: 18, color: '#333', paddingTop: 10}}>
+                Become a member
+              </Text>
+            </View>
+
+            <FontAwesome5Icon
+              name="chevron-right"
+              size={16}
+              style={{paddingTop: 10, alignSelf: 'center'}}
+              color={'gray'}
+              regular
+            />
+          </View>
+        </TouchableOpacity>
+        <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
+      </View>
+    </SafeAreaView>
   );
 };
 
