@@ -10,6 +10,7 @@ import {
   Button,
   Platform,
 } from 'react-native';
+import axiosService from '../../../../common/clients/api';
 import Geolocation from 'react-native-geolocation-service';
 import {AirbnbRating, Card, Text} from 'react-native-elements';
 import {StackActions, NavigationActions} from 'react-navigation';
@@ -18,54 +19,57 @@ import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../../../common/assets/color/color';
 import {STATUS} from '../../../../common/constants';
 const ExploreClassList = props => {
-  const URL =
-    'http://127.0.0.1:3000/classinfos/date/' +
-    props.date +
-    '?min_hour=' +
-    props.minHour +
-    '&max_hour=' +
-    props.maxHour +
-    '&min_distance=' +
-    props.minDistance +
-    '&max_distance=' +
-    props.maxDistance +
-    '&min_credit=' +
-    props.minCredit +
-    '&max_credit=' +
-    props.maxCredit +
-    '&class_name=' +
-    props.className +
-    '&longitude=' +
-    props.longitude +
-    '&latitude=' +
-    props.latitude;
-
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
-        let response = await fetch(URL, {
-          headers: {
-            Authorization: await AsyncStorage.getItem('@token'),
-            'Content-Type': 'application/json',
-          },
-        });
+        let response = await axiosService.get(
+          'classinfos/date/' +
+            props.date +
+            '?min_hour=' +
+            props.minHour +
+            '&max_hour=' +
+            props.maxHour +
+            '&min_distance=' +
+            props.minDistance +
+            '&max_distance=' +
+            props.maxDistance +
+            '&min_credit=' +
+            props.minCredit +
+            '&max_credit=' +
+            props.maxCredit +
+            '&min_age=' +
+            props.minAge +
+            '&max_age=' +
+            props.maxAge +
+            '&min_level=' +
+            props.minLevel +
+            '&max_level=' +
+            props.maxLevel +
+            '&class_name=' +
+            props.className +
+            '&longitude=' +
+            props.longitude +
+            '&latitude=' +
+            props.latitude,
+        );
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
-          let data = await response.json();
+          let {data} = response;
           setClasses(data);
           setLoading(false);
         }
       })();
-    }, [URL, props]),
+    }, [props]),
   );
   if (!loading) {
     return (
       <ScrollView>
         {classes.map(classInfo => (
           <TouchableOpacity
+            key={classInfo.id}
             onPress={() => {
               props.navigation.navigate('ClassDetail', {
                 id: classInfo.id,

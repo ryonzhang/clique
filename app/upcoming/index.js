@@ -22,9 +22,8 @@ import {STATUS} from '../common/constants';
 import {useFocusEffect} from 'react-navigation-hooks';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import MapView from 'react-native-maps';
+import axiosService from '../common/clients/api';
 const Upcoming = props => {
-  const URL = 'http://127.0.0.1:3000/classinfos/upcoming';
-
   const [classes, setClasses] = useState([]);
   const [classInfo, setClassInfo] = useState({});
   const [loading, setLoading] = useState(true);
@@ -41,16 +40,12 @@ const Upcoming = props => {
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
-        let response = await fetch(URL, {
-          headers: {
-            Authorization: await AsyncStorage.getItem('@token'),
-            'Content-Type': 'application/json',
-          },
-        });
+        let response = await axiosService.get('/classinfos/upcoming');
+        console.log(response.status);
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
-          let data = await response.json();
+          let {data} = response;
           setClasses(data);
           setLoading(false);
         }
@@ -120,17 +115,10 @@ const Upcoming = props => {
                 title={'Confirm Cancellation'}
                 type="outline"
                 onPress={() => {
-                  const URL =
-                    'http://127.0.0.1:3000/classinfos/delink/' + classInfo.id;
-
                   (async function() {
-                    let response = await fetch(URL, {
-                      headers: {
-                        Authorization: await AsyncStorage.getItem('@token'),
-                        'Content-Type': 'application/json',
-                      },
-                      method: 'POST',
-                    });
+                    let response = await axiosService.post(
+                      '/classinfos/delink/' + classInfo.id,
+                    );
                     if (response.status === STATUS.ACCEPTED) {
                       setVisible(false);
                     } else {
@@ -146,6 +134,7 @@ const Upcoming = props => {
           <ScrollView style={{padding: 20}}>
             {classes.map(classInfo => (
               <Card
+                key={classInfo.id}
                 image={require('../common/assets/images/home.screen.1.jpeg')}>
                 <TouchableOpacity
                   onPress={() => {

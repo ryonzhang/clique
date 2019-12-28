@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../common/assets/color/color';
 import {STATUS} from '../../common/constants';
+import axiosService from '../../common/clients/api';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 const FriendsList = props => {
   const [friends, setFriends] = useState([]);
@@ -20,19 +21,13 @@ const FriendsList = props => {
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
-        const URL =
-          'http://127.0.0.1:3000/users/friends/' +
-          (props.user_id ? props.user_id : '');
-        let response = await fetch(URL, {
-          headers: {
-            Authorization: await AsyncStorage.getItem('@token'),
-            'Content-Type': 'application/json',
-          },
-        });
+        let response = await axiosService.get(
+          '/users/friends/' + (props.user_id ? props.user_id : ''),
+        );
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
-          let data = await response.json();
+          let {data} = response;
           setFriends(data);
           setLoading(false);
           props.onLoad(data.length);
@@ -40,17 +35,11 @@ const FriendsList = props => {
       })();
       if (!props.user_id) {
         (async function() {
-          const URL = 'http://127.0.0.1:3000/users/requested_friends/';
-          let response = await fetch(URL, {
-            headers: {
-              Authorization: await AsyncStorage.getItem('@token'),
-              'Content-Type': 'application/json',
-            },
-          });
+          let response = await axiosService.get('/users/requested_friends/');
           if (response.status === STATUS.UNPROCESSED_ENTITY) {
             props.navigation.navigate('Login');
           } else {
-            let data = await response.json();
+            let {data} = response;
             setRequestedFriends(data);
             setLoading(false);
           }
@@ -93,15 +82,9 @@ const FriendsList = props => {
                   <View style={{flexDirection: 'row'}}>
                     <TouchableOpacity
                       onPress={async () => {
-                        const URL =
-                          'http://127.0.0.1:3000/users/accept/' + friend.id;
-                        let response = await fetch(URL, {
-                          headers: {
-                            Authorization: await AsyncStorage.getItem('@token'),
-                            'Content-Type': 'application/json',
-                          },
-                          method: 'POST',
-                        });
+                        let response = await axiosService.post(
+                          '/users/accept/' + friend.id,
+                        );
                         if (response.status === STATUS.UNPROCESSED_ENTITY) {
                           props.navigation.navigate('Login');
                         } else {
@@ -114,15 +97,9 @@ const FriendsList = props => {
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={async () => {
-                        const URL =
-                          'http://127.0.0.1:3000/users/reject/' + friend.id;
-                        let response = await fetch(URL, {
-                          headers: {
-                            Authorization: await AsyncStorage.getItem('@token'),
-                            'Content-Type': 'application/json',
-                          },
-                          method: 'POST',
-                        });
+                        let response = await axiosService.post(
+                          '/users/reject/' + friend.id,
+                        );
                         if (response.status === STATUS.UNPROCESSED_ENTITY) {
                           props.navigation.navigate('Login');
                         } else {

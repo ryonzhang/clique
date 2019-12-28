@@ -31,6 +31,7 @@ import makeInput, {
 } from 'react-native-formik';
 import {FilledTextField} from 'react-native-material-textfield';
 import {STATUS} from '../../common/constants';
+import axiosService from '../../common/clients/api';
 
 const MyInput = compose(
   handleTextInput,
@@ -109,16 +110,8 @@ const Account = props => {
             initialValues={user}
             validate={validate}
             onSubmit={values => {
-              const URL = 'http://127.0.0.1:3000/users/update';
               (async function() {
-                let response = await fetch(URL, {
-                  headers: {
-                    Authorization: await AsyncStorage.getItem('@token'),
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(values),
-                  method: 'POST',
-                });
+                let response = await axiosService.post('/users/update', values);
                 if (response.status === STATUS.ACCEPTED) {
                   await AsyncStorage.setItem('@user', JSON.stringify(values));
                   setUser(values);

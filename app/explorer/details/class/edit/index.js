@@ -32,6 +32,7 @@ import makeInput, {
 import {FilledTextField} from 'react-native-material-textfield';
 import {STATUS} from '../../../../common/constants';
 import {Platform} from 'react-native';
+import axiosService from '../../../../common/clients/api';
 const MyInput = compose(
   handleTextInput,
   withNextInputAutoFocusInput,
@@ -110,38 +111,16 @@ const ClassEdit = props => {
     return (
       <>
         <SafeAreaView style={styles.mainContainer}>
-          <Header
-            containerStyle={{
-              backgroundColor: '#ccc',
-              justifyContent: 'space-around',
-              marginTop: Platform.OS === 'ios' ? -60 : -30,
-            }}
-            leftComponent={
-              <TouchableOpacity
-                onPress={() => {
-                  props.navigation.navigate('Settings');
-                }}>
-                <FontAwesome5Icon name="arrow-left" size={20} color={'black'} />
-              </TouchableOpacity>
-            }
-            centerComponent={<Text style={{fontSize: 20}}>Class</Text>}
-          />
           <ScrollView>
             <Formik
               initialValues={classInfo}
               validate={validate}
               onSubmit={values => {
-                const URL =
-                  'http://127.0.0.1:3000/classinfos/update/' + classInfo.id;
                 (async function() {
-                  let response = await fetch(URL, {
-                    headers: {
-                      Authorization: await AsyncStorage.getItem('@token'),
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(values),
-                    method: 'POST',
-                  });
+                  let response = await axiosService.post(
+                    '/classinfos/update/' + classInfo.id,
+                    values,
+                  );
                   if (response.status === STATUS.ACCEPTED) {
                     setClass(values);
                     alert('Your account has been updated');

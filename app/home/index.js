@@ -13,8 +13,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import colors from '../common/assets/color/color';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {STATUS} from '../common/constants';
+import axiosService from '../common/clients/api';
 const Home = props => {
-  const URL = 'http://127.0.0.1:3000/classinfos/new';
   const [classes, setClasses] = useState([]);
   const [upcomingCount, setUpcomingCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
@@ -22,17 +22,11 @@ const Home = props => {
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
-        let response = await fetch(URL, {
-          headers: {
-            Authorization: await AsyncStorage.getItem('@token'),
-            'Content-Type': 'application/json',
-          },
-        });
+        let response = await axiosService.get('/classinfos/new');
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
-          let data = await response.json();
-          console.log('dummy');
+          let {data} = response;
           setClasses(data.classes);
           setUpcomingCount(data.upcoming_count);
           setCompletedCount(data.completed_count);

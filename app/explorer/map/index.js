@@ -19,6 +19,7 @@ import {
   Overlay,
 } from 'react-native-elements';
 import Carousel from 'react-native-snap-carousel';
+import axiosService from '../../common/clients/api';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import MapView, {Marker} from 'react-native-maps';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
@@ -31,7 +32,6 @@ import {getIn, setIn} from 'formik';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 const Map = props => {
-  const URL = 'http://127.0.0.1:3000/institutions/nearby';
   const [visible, setVisible] = useState(false);
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,9 +109,8 @@ const Map = props => {
   };
 
   const getInstitutions = async () => {
-    let response = await fetch(
-      URL +
-        '?latitude=' +
+    let response = await axiosService.get(
+      '/institutions/nearby?latitude=' +
         searchLat +
         '&longitude=' +
         searchLng +
@@ -119,17 +118,12 @@ const Map = props => {
         minDistance +
         '&max_distance=' +
         maxDistance,
-      {
-        headers: {
-          Authorization: await AsyncStorage.getItem('@token'),
-          'Content-Type': 'application/json',
-        },
-      },
     );
+
     if (response.status === STATUS.UNPROCESSED_ENTITY) {
       props.navigation.navigate('Login');
     } else {
-      let data = await response.json();
+      let {data} = response;
       setInstitutions(data);
       setLoading(false);
     }

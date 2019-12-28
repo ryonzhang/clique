@@ -26,7 +26,7 @@ import {LEVELS, STATUS} from '../../../common/constants';
 import MapView, {Marker} from 'react-native-maps';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import QRCode from '../../../common/components/QRCode';
-
+import axiosService from '../../../common/clients/api';
 Date.prototype.addMinutes = function(minutes) {
   var dat = new Date(this.valueOf());
   dat.setMinutes(dat.getMinutes() + minutes);
@@ -61,9 +61,6 @@ const actions = [
 ];
 
 const ClassDetail = props => {
-  const URL =
-    'http://127.0.0.1:3000/classinfos/' + props.navigation.state.params.id;
-  console.log(URL);
   const [classInfo, setClassInfo] = useState({});
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState(false);
@@ -81,16 +78,13 @@ const ClassDetail = props => {
         setUser(JSON.parse(data));
       })();
       (async function() {
-        let response = await fetch(URL, {
-          headers: {
-            Authorization: await AsyncStorage.getItem('@token'),
-            'Content-Type': 'application/json',
-          },
-        });
+        let response = await axiosService.get(
+          '/classinfos/' + props.navigation.state.params.id,
+        );
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
-          let data = await response.json();
+          let {data} = response;
           setClassInfo(data.classinfo);
           setStatus(data.status);
           switch (status) {
@@ -113,7 +107,7 @@ const ClassDetail = props => {
           setLoading(false);
         }
       })();
-    }, [URL, props.navigation, status]),
+    }, [props.navigation, status]),
   );
 
   const _onPressStatus = () => {
@@ -204,18 +198,12 @@ const ClassDetail = props => {
                   title={btnContent}
                   type="outline"
                   onPress={() => {
-                    const URL =
-                      'http://127.0.0.1:3000/classinfos/' +
-                      (status === 'open' ? 'link/' : 'delink/') +
-                      classInfo.id;
                     (async function() {
-                      let response = await fetch(URL, {
-                        headers: {
-                          Authorization: await AsyncStorage.getItem('@token'),
-                          'Content-Type': 'application/json',
-                        },
-                        method: 'POST',
-                      });
+                      let response = await axiosService.post(
+                        '/classinfos/' +
+                          (status === 'open' ? 'link/' : 'delink/') +
+                          classInfo.id,
+                      );
                       if (response.status === STATUS.ACCEPTED) {
                         setVisible(false);
                         props.navigation.navigate('Upcoming', {
@@ -318,7 +306,7 @@ const ClassDetail = props => {
             <Text style={styles.markedText}>Category:</Text>
             {classInfo.categories.map(c => (
               <Badge
-                key={classInfo.categories.indexOf(c)}
+                key={c.id}
                 status="success"
                 value={c.name}
                 containerStyle={{padding: 0.5}}
@@ -336,7 +324,7 @@ const ClassDetail = props => {
             <Text style={styles.markedText}>Tags:</Text>
             {classInfo.tags.map(c => (
               <Badge
-                key={classInfo.tags.indexOf(c)}
+                key={c.id}
                 status="success"
                 value={c.name}
                 containerStyle={{padding: 0.5}}
@@ -386,15 +374,15 @@ const ClassDetail = props => {
             <MapView
               style={{width: width * 0.8, height: 250}}
               region={{
-                latitude: classInfo.institution.latitude,
-                longitude: classInfo.institution.longitude,
+                latitude: parseFloat(classInfo.institution.latitude),
+                longitude: parseFloat(classInfo.institution.longitude),
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
               }}>
               <Marker
                 coordinate={{
-                  latitude: classInfo.institution.latitude,
-                  longitude: classInfo.institution.longitude,
+                  latitude: parseFloat(classInfo.institution.latitude),
+                  longitude: parseFloat(classInfo.institution.longitude),
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.0421,
                 }}
@@ -438,7 +426,7 @@ const ClassDetail = props => {
           onPress={() => {
             setActive(!active);
           }}>
-          <Icon name="share" />
+          <Icon name="plus" type={'AntDesign'} />
           <Button
             style={{backgroundColor: '#34A34F'}}
             onPress={() => {

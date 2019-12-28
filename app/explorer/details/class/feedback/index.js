@@ -32,6 +32,7 @@ import makeInput, {
 import {FilledTextField} from 'react-native-material-textfield';
 import {STATUS} from '../../../../common/constants';
 import {Platform} from 'react-native';
+import axiosService from '../../../../common/clients/api';
 const MyInput = compose(
   handleTextInput,
   withNextInputAutoFocusInput,
@@ -97,18 +98,13 @@ const FeedbackClass = props => {
     React.useCallback(
       React.useCallback(() => {
         (async function() {
-          const URL =
-            'http://127.0.0.1:3000/classinfos/' + classinfo.id + '/feedback';
-          let response = await fetch(URL, {
-            headers: {
-              Authorization: await AsyncStorage.getItem('@token'),
-              'Content-Type': 'application/json',
-            },
-          });
+          let response = await axiosService.get(
+            '/classinfos/' + classinfo.id + '/feedback',
+          );
           if (response.status === STATUS.UNPROCESSED_ENTITY) {
             props.navigation.navigate('Login');
           } else {
-            let data = await response.json();
+            let {data} = response;
             console.log(data);
             setStarNum(data.star_num);
             setComment(data.comment);
@@ -127,19 +123,11 @@ const FeedbackClass = props => {
               initialValues={{}}
               validate={validate}
               onSubmit={values => {
-                const URL =
-                  'http://127.0.0.1:3000/classinfos/' +
-                  classinfo.id +
-                  '/feedback';
                 (async function() {
-                  let response = await fetch(URL, {
-                    headers: {
-                      Authorization: await AsyncStorage.getItem('@token'),
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({...values, star_num: starNum}),
-                    method: 'POST',
-                  });
+                  let response = await axiosService.post(
+                    'classinfos/' + classinfo.id + '/feedback',
+                    {...values, star_num: starNum},
+                  );
                   if (response.status === STATUS.ACCEPTED) {
                     alert('Your account has been updated');
                   } else {

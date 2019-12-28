@@ -15,10 +15,9 @@ import {Text, AirbnbRating, Card, SearchBar} from 'react-native-elements';
 import colors from '../../common/assets/color/color';
 import {STATUS} from '../../common/constants';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import axiosService from '../../common/clients/api';
 
 const UserSearch = props => {
-  const URL = 'http://127.0.0.1:3000/users/searchable';
-  console.log(URL);
   const [users, setUsers] = useState([]);
   const [intendingUsers, setIntendingUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,19 +48,19 @@ const UserSearch = props => {
   };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const _loadMore = async () => {
-    let response = await fetch(
-      URL + '?limit=' + limit + '&offset=' + offset + '&search=' + search,
-      {
-        headers: {
-          Authorization: await AsyncStorage.getItem('@token'),
-          'Content-Type': 'application/json',
-        },
-      },
+    let response = await axiosService.get(
+      '/users/searchable' +
+        '?limit=' +
+        limit +
+        '&offset=' +
+        offset +
+        '&search=' +
+        search,
     );
     if (response.status === STATUS.UNPROCESSED_ENTITY) {
       props.navigation.navigate('Login');
     } else {
-      let data = await response.json();
+      let {data} = response;
       console.log(data);
       // console.log(users);
       if (offset) {
@@ -135,20 +134,10 @@ const UserSearch = props => {
                     {intendingUsers.includes(item.id) || (
                       <TouchableOpacity
                         onPress={() => {
-                          console.log(users);
-                          const URL =
-                            'http://127.0.0.1:3000/users/invite/' + item.id;
-
                           (async function() {
-                            let response = await fetch(URL, {
-                              headers: {
-                                Authorization: await AsyncStorage.getItem(
-                                  '@token',
-                                ),
-                                'Content-Type': 'application/json',
-                              },
-                              method: 'POST',
-                            });
+                            let response = await axiosService.post(
+                              '/users/invite/' + item.id,
+                            );
                             if (response.status === STATUS.CREATED) {
                               setIntendingUsers([...intendingUsers, item.id]);
                               setUsers(users);

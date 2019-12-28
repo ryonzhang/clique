@@ -31,6 +31,7 @@ import makeInput, {
 } from 'react-native-formik';
 import {FilledTextField} from 'react-native-material-textfield';
 import {STATUS} from '../../../../common/constants';
+import axiosService from '../../../../common/clients/api';
 
 const MyInput = compose(
   handleTextInput,
@@ -98,37 +99,15 @@ const InstitutionEdit = props => {
   return (
     <SafeAreaView style={styles.mainContainer}>
       <ScrollView>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate('Settings');
-            }}>
-            <FontAwesome5Icon
-              name="arrow-left"
-              size={25}
-              style={{paddingLeft: 20}}
-              color={'black'}
-            />
-          </TouchableOpacity>
-          <Text style={{paddingHorizontal: 120, fontSize: 20}}>
-            Institution
-          </Text>
-        </View>
         <Formik
           initialValues={institution}
           validate={validate}
           onSubmit={values => {
-            const URL =
-              'http://127.0.0.1:3000/institutions/update/' + institution.id;
             (async function() {
-              let response = await fetch(URL, {
-                headers: {
-                  Authorization: await AsyncStorage.getItem('@token'),
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(values),
-                method: 'POST',
-              });
+              let response = await axiosService.post(
+                '/institutions/update/' + institution.id,
+                values,
+              );
               if (response.status === STATUS.ACCEPTED) {
                 setInstitution(values);
                 alert('Your account has been updated');

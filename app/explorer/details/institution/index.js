@@ -19,23 +19,22 @@ import {
   Overlay,
   Card,
 } from 'react-native-elements';
+import {Container, Header, Icon, Fab} from 'native-base';
 import * as Animatable from 'react-native-animatable';
-import Icon from 'react-native-vector-icons/AntDesign';
 import colors from '../../../common/assets/color/color';
 import Divider from 'react-native-material-ui/src/Divider';
 import {STATUS} from '../../../common/constants';
 import MapView, {Marker} from 'react-native-maps';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import axiosService from '../../../common/clients/api';
 
 const InstitutionDetail = props => {
-  const URL =
-    'http://127.0.0.1:3000/institutions/' + props.navigation.state.params.id;
-  console.log(URL);
   const [institution, setInstitution] = useState({});
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(true);
   const {height, width} = Dimensions.get('window');
   const [user, setUser] = useState({});
+  const [active, setActive] = useState(false);
   const AnimatedIcon = Animatable.createAnimatableComponent(Icon);
 
   useFocusEffect(
@@ -46,22 +45,19 @@ const InstitutionDetail = props => {
         console.log(data);
       })();
       (async function() {
-        let response = await fetch(URL, {
-          headers: {
-            Authorization: await AsyncStorage.getItem('@token'),
-            'Content-Type': 'application/json',
-          },
-        });
+        let response = await axiosService.get(
+          '/institutions/' + props.navigation.state.params.id,
+        );
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
-          let data = await response.json();
+          let {data} = response;
           setInstitution(data.institution);
           setLiked(data.liked);
           setLoading(false);
         }
       })();
-    }, [URL, props.navigation]),
+    }, [props.navigation]),
   );
   if (!loading) {
     return (
@@ -75,17 +71,11 @@ const InstitutionDetail = props => {
             activeOpacity={1}
             onPress={() => {
               (async function() {
-                const URL =
-                  'http://127.0.0.1:3000/institutions/' +
-                  (liked ? 'defan/' : 'fan/') +
-                  institution.id;
-                let response = await fetch(URL, {
-                  headers: {
-                    Authorization: await AsyncStorage.getItem('@token'),
-                    'Content-Type': 'application/json',
-                  },
-                  method: 'POST',
-                });
+                let response = await axiosService.post(
+                  '/institutions/' +
+                    (liked ? 'defan/' : 'fan/') +
+                    institution.id,
+                );
                 if (response.status === STATUS.UNPROCESSED_ENTITY) {
                   props.navigation.navigate('Login');
                 } else {
@@ -103,25 +93,6 @@ const InstitutionDetail = props => {
           </TouchableOpacity>
         )}
 
-        {(user.role === 'partner' || user.role === 'admin') && (
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => {
-              props.navigation.navigate('InstitutionEdit', {
-                institution: institution,
-              });
-            }}
-            style={styles.icon}>
-            <FontAwesome5Icon
-              name="edit"
-              size={25}
-              style={{paddingTop: 10}}
-              color={'green'}
-              regular
-            />
-          </TouchableOpacity>
-        )}
-
         <ScrollView style={{padding: 14}}>
           <Text h3>{institution.name}</Text>
           <View
@@ -133,6 +104,7 @@ const InstitutionDetail = props => {
             <Text style={styles.markedText}>Category:</Text>
             {institution.categories.map(c => (
               <Badge
+                key={c.id}
                 status="success"
                 value={c.name}
                 containerStyle={{padding: 0.5}}
@@ -149,6 +121,7 @@ const InstitutionDetail = props => {
             <Text style={styles.markedText}>Tag:</Text>
             {institution.tags.map(c => (
               <Badge
+                key={c.id}
                 status="success"
                 value={c.name}
                 containerStyle={{padding: 0.5}}
@@ -231,6 +204,38 @@ const InstitutionDetail = props => {
             }}
           />
         </ScrollView>
+        <Fab
+          active={active}
+          direction="up"
+          containerStyle={{}}
+          style={{backgroundColor: '#5067FF'}}
+          position="bottomRight"
+          onPress={() => {
+            setActive(!active);
+          }}>
+          <Icon name="plus" type={'AntDesign'} />
+          {(user.role === 'partner' || user.role === 'admin') && (
+            <Button
+              style={{backgroundColor: '#34A34F'}}
+              onPress={() => {
+                props.navigation.navigate('InstitutionEdit', {
+                  institution: institution,
+                });
+              }}>
+              <Icon name="edit" type={'AntDesign'} />
+            </Button>
+          )}
+          <Button
+            style={{backgroundColor: '#3B5998'}}
+            onPress={() => {
+              props.navigation.navigate('Calendar', {
+                name: institution.name,
+                id: institution.id,
+              });
+            }}>
+            <Icon name="calendar" type={'AntDesign'} />
+          </Button>
+        </Fab>
       </SafeAreaView>
     );
   } else {

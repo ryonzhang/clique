@@ -2,6 +2,7 @@ export const LEVELS = {
   1: 'Beginner Level',
   2: 'Intermediate Level',
   3: 'Advanced Level',
+  4: 'Professional Level',
 };
 
 export const STATUS = {

@@ -4,11 +4,11 @@ import {Button, Input} from 'react-native-elements';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../../common/assets/color/color';
 import {STATUS} from '../../common/constants';
+import axiosService from '../../common/clients/api';
 import AsyncStorage from '@react-native-community/async-storage';
 const Login = props => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const URL = 'http://127.0.0.1:3000/auth/login';
   return (
     <SafeAreaView style={styles.safeContainer}>
       <View style={styles.container}>
@@ -44,19 +44,12 @@ const Login = props => {
           containerStyle={styles.padding_top_10}
           title="Log in"
           onPress={async () => {
-            let response = await fetch(URL, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              method: 'POST',
-              body: JSON.stringify({
-                //TODO: change to actual password
-                password: 'ryon',
-                email: email,
-              }),
+            let response = await axiosService.post('/auth/login', {
+              password: 'ryon',
+              email: email,
             });
             if (response.status === STATUS.OK) {
-              let data = await response.json();
+              let {data} = response;
               try {
                 await AsyncStorage.setItem('@token', data.auth_token);
                 await AsyncStorage.setItem('@user', JSON.stringify(data.user));

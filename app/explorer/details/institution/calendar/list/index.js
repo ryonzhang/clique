@@ -11,34 +11,26 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../.././../../common/assets/color/color';
 import {STATUS} from '../../../../../common/constants';
+import axiosService from '../../../../../common/clients/api';
 import {NavigationActions, StackActions} from 'react-navigation';
 const CalendarClassList = props => {
-  const URL =
-    'http://127.0.0.1:3000/institutions/' +
-    props.institution_id +
-    '/classes/' +
-    props.date;
-
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
-        let response = await fetch(URL, {
-          headers: {
-            Authorization: await AsyncStorage.getItem('@token'),
-            'Content-Type': 'application/json',
-          },
-        });
+        let response = await axiosService.get(
+          '/institutions/' + props.institution_id + '/classes/' + props.date,
+        );
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
-          let data = await response.json();
+          let {data} = response;
           setClasses(data);
           setLoading(false);
         }
       })();
-    }, [URL, props]),
+    }, [props]),
   );
   if (!loading) {
     return (

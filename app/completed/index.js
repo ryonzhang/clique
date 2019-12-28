@@ -13,9 +13,8 @@ import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../common/assets/color/color';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {STATUS} from '../common/constants';
+import axiosService from '../common/clients/api';
 const Completed = props => {
-  const URL = 'http://127.0.0.1:3000/classinfos/completed';
-
   const [classes, setClasses] = useState([]);
   const [classInfo, setClassInfo] = useState({});
   const [loading, setLoading] = useState(true);
@@ -23,16 +22,11 @@ const Completed = props => {
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
-        let response = await fetch(URL, {
-          headers: {
-            Authorization: await AsyncStorage.getItem('@token'),
-            'Content-Type': 'application/json',
-          },
-        });
+        let response = await axiosService.get('/classinfos/completed');
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
-          let data = await response.json();
+          let {data} = response;
           setClasses(data);
           setLoading(false);
         }

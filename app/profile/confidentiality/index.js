@@ -12,6 +12,7 @@ import {Text, Divider, CheckBox} from 'react-native-elements';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {useFocusEffect} from 'react-navigation-hooks';
 import {STATUS} from '../../common/constants';
+import axiosService from '../../common/clients/api';
 
 const Confidentiality = props => {
   const [user, setUser] = useState({});
@@ -25,16 +26,8 @@ const Confidentiality = props => {
   const [loading, setLoading] = useState(true);
 
   const upload = values => {
-    const URL = 'http://127.0.0.1:3000/users/update';
     (async function() {
-      let response = await fetch(URL, {
-        headers: {
-          Authorization: await AsyncStorage.getItem('@token'),
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-        method: 'POST',
-      });
+      let response = await axiosService.post('/users/update', values);
       if (response.status === STATUS.ACCEPTED) {
         const newUser = Object.assign(user, values);
         await AsyncStorage.setItem('@user', JSON.stringify(newUser));

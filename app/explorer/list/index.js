@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-
+import {LEVELS, STATUS} from '../../common/constants';
 import {
   Input,
   Text,
@@ -29,7 +29,6 @@ import FavoriteInstitutionList from '../details/institution/list';
 import FriendsList from '../../friend/list';
 import ExploreClassList from '../details/class/list';
 import AsyncStorage from '@react-native-community/async-storage';
-import {STATUS} from '../../common/constants';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {useFocusEffect} from 'react-navigation-hooks';
 import {hasLocationPermission} from '../../common/functions';
@@ -73,6 +72,10 @@ const List = props => {
   const {height, width} = Dimensions.get('window');
   const [minCredit, setMinCredit] = useState(0);
   const [maxCredit, setMaxCredit] = useState(30);
+  const [minLevel, setMinLevel] = useState(1);
+  const [maxLevel, setMaxLevel] = useState(4);
+  const [minAge, setMinAge] = useState(5);
+  const [maxAge, setMaxAge] = useState(30);
   const [minDistance, setMinDistance] = useState(0.0);
   const [maxDistance, setMaxDistance] = useState(30.0);
   const [searchLat, setSearchLat] = useState(1.29027);
@@ -116,11 +119,10 @@ const List = props => {
     <SafeAreaView style={styles.mainContainer}>
       <Overlay
         isVisible={visible}
-        width={width * 0.8}
+        width={width}
+        height={height}
         onBackdropPress={() => setVisible(false)}>
         <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: 26}}>Filters</Text>
-          <Divider />
           <View style={{padding: 20}}>
             <Text style={{fontSize: 22}}>Credits</Text>
             <Text style={{fontSize: 15, color: 'gray'}}>0 to 30 credits</Text>
@@ -205,6 +207,66 @@ const List = props => {
 
             <Text style={{fontSize: 12, color: 'green'}}>
               selected {minHour} to {maxHour} o'clock
+            </Text>
+          </View>
+          <Divider />
+          <View style={{padding: 20}}>
+            <Text style={{fontSize: 22}}>Level</Text>
+            <Text style={{fontSize: 15, color: 'gray'}}>
+              Beginner to Professional Level
+            </Text>
+
+            <MultiSlider
+              values={[minLevel, maxLevel]}
+              sliderLength={280}
+              onValuesChange={values => {
+                setMinLevel(values[0]);
+                setMaxLevel(values[1]);
+              }}
+              min={1}
+              max={4}
+              step={1}
+              allowOverlap
+              snapped
+              selectedStyle={{
+                backgroundColor: 'green',
+              }}
+              unselectedStyle={{
+                backgroundColor: 'silver',
+              }}
+            />
+
+            <Text style={{fontSize: 12, color: 'green'}}>
+              selected {LEVELS[minLevel]} to {LEVELS[maxLevel]}
+            </Text>
+          </View>
+          <Divider />
+          <View style={{padding: 20}}>
+            <Text style={{fontSize: 22}}>Age</Text>
+            <Text style={{fontSize: 15, color: 'gray'}}>5 to 30 years old</Text>
+
+            <MultiSlider
+              values={[minAge, maxAge]}
+              sliderLength={280}
+              onValuesChange={values => {
+                setMinAge(values[0]);
+                setMaxAge(values[1]);
+              }}
+              min={5}
+              max={30}
+              step={1}
+              allowOverlap
+              snapped
+              selectedStyle={{
+                backgroundColor: 'green',
+              }}
+              unselectedStyle={{
+                backgroundColor: 'silver',
+              }}
+            />
+
+            <Text style={{fontSize: 12, color: 'green'}}>
+              selected {minAge} to {maxAge} years old
             </Text>
           </View>
           <Divider />
@@ -392,6 +454,10 @@ const List = props => {
                 maxDistance={maxDistance}
                 minCredit={minCredit}
                 maxCredit={maxCredit}
+                minAge={minAge}
+                maxAge={maxAge}
+                minLevel={minLevel}
+                maxLevel={maxLevel}
                 className={className}
                 longitude={searchLng}
                 latitude={searchLat}

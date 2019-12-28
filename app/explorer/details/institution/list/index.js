@@ -11,26 +11,20 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../../../common/assets/color/color';
 import {STATUS} from '../../../../common/constants';
+import axiosService from '../../../../common/clients/api';
 const FavoriteInstitutionList = props => {
-  const URL =
-    'http://127.0.0.1:3000/institutions/favorites/' +
-    (props.user_id ? props.user_id : '');
-
   const [institutions, setInstitutions] = useState([]);
   const [loading, setLoading] = useState(true);
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
-        let response = await fetch(URL, {
-          headers: {
-            Authorization: await AsyncStorage.getItem('@token'),
-            'Content-Type': 'application/json',
-          },
-        });
+        let response = await axiosService.get(
+          '/institutions/favorites/' + (props.user_id ? props.user_id : ''),
+        );
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
-          let data = await response.json();
+          let {data} = response;
           setInstitutions(data);
           setLoading(false);
           props.onLoad(data.length);
