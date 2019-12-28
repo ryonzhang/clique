@@ -1,7 +1,14 @@
 import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import colors from '../../../../common/assets/color/color';
 import FavoriteInstitutionList from '../list';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 const Admin = props => {
   return (
     <SafeAreaView style={styles.safeContainer}>
@@ -9,6 +16,19 @@ const Admin = props => {
     </SafeAreaView>
   );
 };
+
+Admin.navigationOptions = screenProps => ({
+  headerTitle: 'Your Institutions',
+  headerLeft: () => (
+    <TouchableOpacity
+      style={{paddingLeft: 20, flex: 1}}
+      onPress={() => {
+        screenProps.navigation.openDrawer();
+      }}>
+      <FontAwesome5Icon name="bars" size={25} color={'black'} />
+    </TouchableOpacity>
+  ),
+});
 
 const styles = StyleSheet.create({
   safeContainer: {

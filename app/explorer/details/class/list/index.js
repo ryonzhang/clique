@@ -67,19 +67,9 @@ const ExploreClassList = props => {
         {classes.map(classInfo => (
           <TouchableOpacity
             onPress={() => {
-              const resetAction = StackActions.reset({
-                index: 1,
-                actions: [
-                  NavigationActions.navigate({routeName: 'Explorer'}),
-                  NavigationActions.navigate({
-                    routeName: 'ClassDetail',
-                    params: {
-                      id: classInfo.id,
-                    },
-                  }),
-                ],
+              props.navigation.navigate('ClassDetail', {
+                id: classInfo.id,
               });
-              props.navigation.dispatch(resetAction);
             }}>
             <View
               style={{

@@ -71,19 +71,6 @@ const Confidentiality = props => {
     return (
       <SafeAreaView style={styles.mainContainer}>
         <ScrollView>
-          <View style={{flexDirection: 'row', paddingVertical: 5}}>
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('Settings');
-              }}>
-              <FontAwesome5Icon
-                name="arrow-left"
-                size={25}
-                style={{paddingLeft: 20}}
-                color={'black'}
-              />
-            </TouchableOpacity>
-          </View>
           <Divider />
           <Text style={{alignSelf: 'center', fontSize: 20}}>
             Who can find me?

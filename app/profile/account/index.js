@@ -105,20 +105,6 @@ const Account = props => {
     return (
       <SafeAreaView style={styles.mainContainer}>
         <ScrollView>
-          <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity
-              onPress={() => {
-                props.navigation.navigate('Settings');
-              }}>
-              <FontAwesome5Icon
-                name="arrow-left"
-                size={25}
-                style={{paddingLeft: 20}}
-                color={'black'}
-              />
-            </TouchableOpacity>
-            <Text style={{paddingHorizontal: 120, fontSize: 20}}>Account</Text>
-          </View>
           <Formik
             initialValues={user}
             validate={validate}

@@ -56,56 +56,13 @@ const Calendar = props => {
       })();
     }, []),
   );
+  Calendar.navigationOptions = screenProps => ({
+    headerTitle: screenProps.navigation.getParam('name'),
+  });
   const dates = Date.getDaysInDays(14);
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity
-            onPress={() => {
-              console.log('ryon');
-              props.navigation.navigate('InstitutionDetail', {
-                id: props.navigation.state.params.id,
-              });
-            }}>
-            <FontAwesome5Icon
-              name="arrow-left"
-              size={25}
-              style={{paddingLeft: 20, flex: 1}}
-              color={'black'}
-            />
-          </TouchableOpacity>
-          <Text style={{flex: 7, fontSize: 18, textAlign: 'center'}}>
-            {props.navigation.state.params.name}
-          </Text>
-          {user.role === 'consumer' && (
-            <View style={{flex: 1, paddingRight: 5}}>
-              <Text style={{fontSize: 18}}>50</Text>
-              <Text style={{fontSize: 8}}>credits</Text>
-            </View>
-          )}
-          {(user.role === 'partner' || user.role === 'admin') && (
-            <TouchableOpacity
-              activeOpacity={1}
-              onPress={() => {
-                props.navigation.navigate('ClassEdit', {
-                  name: props.navigation.state.params.name,
-                  id: props.navigation.state.params.id,
-                });
-              }}
-              style={styles.icon}>
-              <FontAwesome5Icon
-                name="plus"
-                size={20}
-                style={{paddingRight: 10}}
-                color={'green'}
-                regular
-              />
-            </TouchableOpacity>
-          )}
-        </View>
-
-        <Divider style={{backgroundColor: 'gray', marginTop: 10}} />
         <View
           style={{
             flexDirection: 'row',

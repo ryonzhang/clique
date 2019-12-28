@@ -18,23 +18,6 @@ const Settings = props => {
   })();
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <Header
-        containerStyle={{
-          backgroundColor: 'white',
-          justifyContent: 'space-around',
-          marginTop: Platform.OS === 'ios' ? -60 : -30,
-        }}
-        leftComponent={
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate('Home');
-            }}>
-            <FontAwesome5Icon name="arrow-left" size={20} color={'black'} />
-          </TouchableOpacity>
-        }
-        centerComponent={<Text style={{fontSize: 20}}>Settings</Text>}
-      />
-
       <View>
         <Text h4 style={{padding: 20}}>
           Account

@@ -60,17 +60,6 @@ const Upcoming = props => {
   if (!loading) {
     return (
       <SafeAreaView style={styles.mainContainer}>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.openDrawer();
-            }}>
-            <FontAwesome5Icon name="bars" size={25} style={{padding: 20}} />
-          </TouchableOpacity>
-          <Text style={{paddingLeft: 30, paddingTop: 17, fontSize: 20}}>
-            Upcoming Cliques
-          </Text>
-        </View>
         <Overlay
           isVisible={visible}
           width={300}

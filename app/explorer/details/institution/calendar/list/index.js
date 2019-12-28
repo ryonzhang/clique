@@ -46,25 +46,10 @@ const CalendarClassList = props => {
         {classes.map(classInfo => (
           <TouchableOpacity
             onPress={() => {
-              const resetAction = StackActions.reset({
-                index: 1,
-                actions: [
-                  NavigationActions.navigate({
-                    routeName: 'Calendar',
-                    params: {
-                      id: props.institution_id,
-                      name: props.institution_name,
-                    },
-                  }),
-                  NavigationActions.navigate({
-                    routeName: 'ClassDetail',
-                    params: {
-                      id: classInfo.id,
-                    },
-                  }),
-                ],
+              props.navigation.navigate('ClassDetail', {
+                id: props.institution_id,
+                name: props.institution_name,
               });
-              props.navigation.dispatch(resetAction);
             }}>
             <View
               style={{
