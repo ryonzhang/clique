@@ -39,7 +39,7 @@ const CompletedList = props => {
         {classes.map(classInfo => (
           <TouchableOpacity
             onPress={() => {
-              props.navigation.navigate('ClassDetail',{
+              props.navigation.navigate('ClassDetail', {
                 id: classInfo.id,
               });
             }}>

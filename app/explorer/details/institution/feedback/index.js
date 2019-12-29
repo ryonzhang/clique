@@ -49,7 +49,12 @@ const Feedback = props => {
 
   const _loadMore = async () => {
     let response = await axiosService.get(
-        '/institutions/' + institution.id + '/feedbacks?limit=' + limit + '&offset=' + offset,
+      '/institutions/' +
+        institution.id +
+        '/feedbacks?limit=' +
+        limit +
+        '&offset=' +
+        offset,
     );
     if (response.status === STATUS.UNPROCESSED_ENTITY) {
       props.navigation.navigate('Login');

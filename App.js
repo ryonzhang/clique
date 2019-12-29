@@ -104,19 +104,18 @@ const AdminNavigator = createStackNavigator(
 
 const ProfileNavigator = createStackNavigator(
   {
-
-      ClassDetail: {
-          screen: ClassDetail,
-          navigationOptions: ({navigation}) => ({
-              headerTitle: 'Class Detail',
-          }),
-      },
-      InstitutionDetail: {
-          screen: InstitutionDetail,
-          navigationOptions: ({navigation}) => ({
-              headerTitle: 'Institution Detail',
-          }),
-      },
+    ClassDetail: {
+      screen: ClassDetail,
+      navigationOptions: ({navigation}) => ({
+        headerTitle: 'Class Detail',
+      }),
+    },
+    InstitutionDetail: {
+      screen: InstitutionDetail,
+      navigationOptions: ({navigation}) => ({
+        headerTitle: 'Institution Detail',
+      }),
+    },
     Profile: {
       screen: Profile,
       navigationOptions: {
@@ -144,12 +143,12 @@ const ProfileNavigator = createStackNavigator(
     OthersProfile: {
       screen: OthersProfile,
     },
-      UserSearch:{
-          screen: UserSearch,
-          navigationOptions: ({navigation}) => ({
-              headerTitle: 'Search Friend',
-          }),
-      }
+    UserSearch: {
+      screen: UserSearch,
+      navigationOptions: ({navigation}) => ({
+        headerTitle: 'Search Friend',
+      }),
+    },
   },
   {
     initialRouteName: 'Profile',

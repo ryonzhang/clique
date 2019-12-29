@@ -27,6 +27,8 @@ const UserSearch = props => {
   const {height, width} = Dimensions.get('window');
   const [search, setSearch] = useState('');
   const [user, setUser] = useState({});
+  const [arrayHolder, setArrayHolder] = useState([]);
+  console.log(arrayHolder.length);
   const _renderFooter = () => {
     if (!loading) {
       return null;
@@ -48,43 +50,39 @@ const UserSearch = props => {
     );
   };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const _loadMore = async (reload) => {
+  const _loadMore = async () => {
     let response = await axiosService.get(
-      '/users/searchable' +
-        '?limit=' +
-        limit +
-        '&offset=' +
-        offset +
-        '&search=' +
-        search,
+      '/users/searchable' + '?limit=' + limit + '&offset=' + offset,
     );
     if (response.status === STATUS.UNPROCESSED_ENTITY) {
       props.navigation.navigate('Login');
     } else {
       let {data} = response;
-
-      setUsers(reload?data.users:[...users, ...data.users]);
-      setIntendingUsers(reload?data.intending:[...intendingUsers, ...data.intending]);
-      setOffset(limit + (reload? 0:offset));
+      setArrayHolder([...arrayHolder, ...data.users]);
+      setUsers([...users, ...data.users]);
+      setIntendingUsers([...intendingUsers, ...data.intending]);
+      setOffset(limit + offset);
       setLoading(false);
     }
   };
 
   useFocusEffect(
     React.useCallback(() => {
-      _loadMore(true);
-    }, [search]),
+      _loadMore();
+    }, []),
   );
   console.log(users);
   if (!loading) {
     return (
       <SafeAreaView style={styles.safeContainer}>
-
         <SearchBar
           placeholder="Type Here..."
           onChangeText={value => {
             setSearch(value);
-            setOffset(0);
+            const newData = arrayHolder.filter(u => {
+              return u.name.toLowerCase().includes(value.toLowerCase());
+            });
+            setUsers(newData);
           }}
           value={search}
         />
@@ -139,7 +137,7 @@ const UserSearch = props => {
               </Card>
             )}
             onEndReached={() => {
-              _loadMore(false);
+              _loadMore();
             }}
             onEndReachedThreshold={0.5}
             initialNumToRender={10}
