@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -47,7 +48,7 @@ const UserSearch = props => {
     );
   };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const _loadMore = async () => {
+  const _loadMore = async (reload) => {
     let response = await axiosService.get(
       '/users/searchable' +
         '?limit=' +
@@ -61,50 +62,24 @@ const UserSearch = props => {
       props.navigation.navigate('Login');
     } else {
       let {data} = response;
-      console.log(data);
-      // console.log(users);
-      if (offset) {
-        setUsers([...users, ...data.users]);
-      } else {
-        setUsers([...data.users]);
-      }
 
-      setIntendingUsers([...intendingUsers, ...data.intending]);
-      setOffset(limit + offset);
+      setUsers(reload?data.users:[...users, ...data.users]);
+      setIntendingUsers(reload?data.intending:[...intendingUsers, ...data.intending]);
+      setOffset(limit + (reload? 0:offset));
       setLoading(false);
     }
   };
 
   useFocusEffect(
     React.useCallback(() => {
-      if (offset <= 10) {
-        (async function() {
-          let data = await AsyncStorage.getItem('@user');
-          setUser(JSON.parse(data));
-
-          // setUsers([]);
-          // setIntendingUsers([]);
-          await _loadMore();
-        })();
-      }
-    }, [offset, _loadMore]),
+      _loadMore(true);
+    }, [search]),
   );
+  console.log(users);
   if (!loading) {
     return (
       <SafeAreaView style={styles.safeContainer}>
-        <View style={{alignSelf: 'flex-start', flexDirection: 'row'}}>
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate('Profile');
-            }}>
-            <FontAwesome5Icon
-              name="arrow-left"
-              size={25}
-              style={{padding: 10}}
-              color={'black'}
-            />
-          </TouchableOpacity>
-        </View>
+
         <SearchBar
           placeholder="Type Here..."
           onChangeText={value => {
@@ -163,8 +138,10 @@ const UserSearch = props => {
                 </View>
               </Card>
             )}
-            onEndReached={_loadMore}
-            onEndReachedThreshold={0.01}
+            onEndReached={() => {
+              _loadMore(false);
+            }}
+            onEndReachedThreshold={0.5}
             initialNumToRender={10}
             ListFooterComponent={_renderFooter}
           />

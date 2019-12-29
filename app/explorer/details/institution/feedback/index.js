@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState, useCallback} from 'react';
 import {
   ActivityIndicator,
@@ -13,6 +14,7 @@ import {useFocusEffect} from 'react-navigation-hooks';
 import {Text, AirbnbRating, Card} from 'react-native-elements';
 import colors from '../../../../common/assets/color/color';
 import {STATUS} from '../../../../common/constants';
+import axiosService from '../../../../common/clients/api';
 
 const Feedback = props => {
   const institution = props.navigation.state.params.institution;
@@ -45,28 +47,25 @@ const Feedback = props => {
     );
   };
 
-  const _loadMore = useCallback(async () => {
-    let response = await fetch(URL + '?limit=' + limit + '&offset=' + offset, {
-      headers: {
-        Authorization: await AsyncStorage.getItem('@token'),
-        'Content-Type': 'application/json',
-      },
-    });
+  const _loadMore = async () => {
+    let response = await axiosService.get(
+        '/institutions/' + institution.id + '/feedbacks?limit=' + limit + '&offset=' + offset,
+    );
     if (response.status === STATUS.UNPROCESSED_ENTITY) {
       props.navigation.navigate('Login');
     } else {
-      let data = await response.json();
+      let {data} = response;
       console.log(data);
       setFeedbacks([...feedbacks, ...data]);
       setOffset(limit + offset);
       setLoading(false);
     }
-  });
+  };
 
   useFocusEffect(
     React.useCallback(() => {
       _loadMore();
-    }, [_loadMore]),
+    }, []),
   );
   if (!loading) {
     return (

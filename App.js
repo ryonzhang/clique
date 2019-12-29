@@ -54,184 +54,6 @@ import Admin from './app/explorer/details/institution/admin';
 import TabViewExample from './app/experiment/tab';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 
-// const AppStackNavigator = createStackNavigator(
-//   {
-//     ClassDetail: {
-//       screen: ClassDetail,
-//       navigationOptions: ({navigation}) => ({
-//         headerLeft: (
-//           <TouchableOpacity
-//             onPress={() =>
-//               navigation.dispatch(
-//                 StackActions.pop({
-//                   n: 1,
-//                 }),
-//               )
-//             }>
-//             <FontAwesome5Icon
-//               name="arrow-left"
-//               size={25}
-//               style={{paddingLeft: 20}}
-//               color={'black'}
-//             />
-//           </TouchableOpacity>
-//         ),
-//         headerTitle: 'Class Detail',
-//       }),
-//     },
-//     InstitutionDetail: {
-//       screen: InstitutionDetail,
-//       navigationOptions: ({navigation}) => ({
-//         headerTitle: 'Institution Detail',
-//       }),
-//     },
-//     Explorer: {
-//       screen: List,
-//       navigationOptions: {
-//         header: null,
-//       },
-//     },
-//     Home: {
-//       screen: Home,
-//       navigationOptions: {
-//         header: null,
-//       },
-//     },
-//     Map: {
-//       screen: Map,
-//       navigationOptions: {
-//         header: null,
-//       },
-//     },
-//
-//     Calendar: {
-//       screen: Calendar,
-//       navigationOptions: {
-//         header: null,
-//       },
-//     },
-//     ExploreClassList: {
-//       screen: ExploreClassList,
-//     },
-//     Feedback: {
-//       screen: Feedback,
-//     },
-//     Profile: {
-//       screen: Profile,
-//       navigationOptions: {
-//         header: null,
-//       },
-//     },
-//     OthersProfile: {
-//       screen: OthersProfile,
-//     },
-//     UserSearch: {
-//       screen: UserSearch,
-//     },
-//     FeedbackClass: {
-//       screen: FeedbackClass,
-//       navigationOptions: ({navigation}) => ({
-//         headerTitle: 'Feedback',
-//       }),
-//     },
-//     Admin: {
-//       screen: Admin,
-//       navigationOptions: ({navigation}) => ({
-//         headerTitle: 'Institution List',
-//       }),
-//     },
-//   },
-//   {
-//     headerMode: 'screen',
-//   },
-// );
-//
-// const AppDrawerNavigator = createDrawerNavigator(
-//   {
-//     UserSearch: {
-//       screen: UserSearch,
-//     },
-//     ExploreClassList: {
-//       screen: ExploreClassList,
-//     },
-//     Stack: {
-//       screen: AppStackNavigator,
-//     },
-//     Map: {
-//       screen: Map,
-//     },
-//
-//     Home: {
-//       screen: Home,
-//     },
-//
-//     Explorer: {
-//       screen: List,
-//     },
-//
-//     Calendar: {
-//       screen: Calendar,
-//     },
-//
-//     Login: {
-//       screen: Login,
-//       navigationOptions: () => ({
-//         drawerLockMode: 'locked-closed',
-//       }),
-//     },
-//     ApplicationDetail: {
-//       screen: ApplicationDetail,
-//     },
-//
-//     Confidentiality: {
-//       screen: Confidentiality,
-//     },
-//     Upcoming: {
-//       screen: Upcoming,
-//     },
-//     Completed: {
-//       screen: Completed,
-//     },
-//     Profile: {
-//       screen: Profile,
-//     },
-//     Settings: {
-//       screen: Settings,
-//     },
-//     Account: {
-//       screen: Account,
-//     },
-//     InstitutionEdit: {
-//       screen: InstitutionEdit,
-//     },
-//     ClassEdit: {
-//       screen: ClassEdit,
-//     },
-//     OthersProfile: {
-//       screen: OthersProfile,
-//     },
-//     QRGen: {
-//       screen: QRGen,
-//     },
-//     Admin: {
-//       screen: Admin,
-//       navigationOptions: ({navigation}) => ({
-//         headerTitle: 'Institution List',
-//       }),
-//     },
-//     InstitutionDetail: {
-//       screen: InstitutionDetail,
-//       navigationOptions: ({navigation}) => ({
-//         headerTitle: 'Institution Detail',
-//       }),
-//     },
-//   },
-//   {
-//     initialRouteName: 'QRGen',
-//     contentComponent: Drawer,
-//   },
-// );
-
 const AdminNavigator = createStackNavigator(
   {
     Calendar: {
@@ -282,6 +104,19 @@ const AdminNavigator = createStackNavigator(
 
 const ProfileNavigator = createStackNavigator(
   {
+
+      ClassDetail: {
+          screen: ClassDetail,
+          navigationOptions: ({navigation}) => ({
+              headerTitle: 'Class Detail',
+          }),
+      },
+      InstitutionDetail: {
+          screen: InstitutionDetail,
+          navigationOptions: ({navigation}) => ({
+              headerTitle: 'Institution Detail',
+          }),
+      },
     Profile: {
       screen: Profile,
       navigationOptions: {
@@ -309,6 +144,12 @@ const ProfileNavigator = createStackNavigator(
     OthersProfile: {
       screen: OthersProfile,
     },
+      UserSearch:{
+          screen: UserSearch,
+          navigationOptions: ({navigation}) => ({
+              headerTitle: 'Search Friend',
+          }),
+      }
   },
   {
     initialRouteName: 'Profile',
