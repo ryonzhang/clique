@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
@@ -50,7 +51,7 @@ const Upcoming = props => {
           setLoading(false);
         }
       })();
-    }, [props.navigation]),
+    }, [visible]),
   );
   if (!loading) {
     return (
