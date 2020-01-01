@@ -93,13 +93,13 @@ const FeedbackClass = props => {
   const [starNum, setStarNum] = useState(5);
   const [loading, setLoading] = useState(true);
   const [comment, setComment] = useState('');
-  const classinfo = props.navigation.state.params.classinfo;
+  const session = props.navigation.state.params.session;
   useFocusEffect(
     React.useCallback(
       React.useCallback(() => {
         (async function() {
           let response = await axiosService.get(
-            '/classinfos/' + classinfo.id + '/feedback',
+            '/sessions/' + session.id + '/feedback',
           );
           if (response.status === STATUS.UNPROCESSED_ENTITY) {
             props.navigation.navigate('Login');
@@ -111,7 +111,7 @@ const FeedbackClass = props => {
             setLoading(false);
           }
         })();
-      }, [classinfo.id, props.navigation]),
+      }, [session.id, props.navigation]),
     ),
   );
   if (!loading) {
@@ -125,7 +125,7 @@ const FeedbackClass = props => {
               onSubmit={values => {
                 (async function() {
                   let response = await axiosService.post(
-                    'classinfos/' + classinfo.id + '/feedback',
+                    'sessions/' + session.id + '/feedback',
                     {...values, star_num: starNum},
                   );
                   if (response.status === STATUS.ACCEPTED) {
@@ -146,7 +146,7 @@ const FeedbackClass = props => {
                 <Form>
                   <Text
                     style={{fontSize: 20, alignSelf: 'center', padding: 20}}>
-                    Thanks for joining {classinfo.name}
+                    Thanks for joining {session.classinfo.name}
                   </Text>
                   <AirbnbRating
                     count={5}

@@ -2,6 +2,7 @@
 import React, {useState} from 'react';
 import {
   StyleSheet,
+  ScrollView,
   View,
   ActivityIndicator,
   TouchableOpacity,
@@ -34,7 +35,7 @@ const FavoriteInstitutionList = props => {
   );
   if (!loading) {
     return (
-      <>
+      <ScrollView>
         {institutions.map(institution => (
           <TouchableOpacity
             onPress={() => {
@@ -68,7 +69,7 @@ const FavoriteInstitutionList = props => {
             </View>
           </TouchableOpacity>
         ))}
-      </>
+      </ScrollView>
     );
   } else {
     return (

@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableHighlight,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import {useFocusEffect} from 'react-navigation-hooks';
 import {Button, Text, Card} from 'react-native-elements';
@@ -15,19 +16,19 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {STATUS} from '../common/constants';
 import axiosService from '../common/clients/api';
 const Home = props => {
-  const [classes, setClasses] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [upcomingCount, setUpcomingCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
-        let response = await axiosService.get('/classinfos/new');
+        let response = await axiosService.get('/sessions/new');
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
           let {data} = response;
-          setClasses(data.classes);
+          setSessions(data.sessions);
           setUpcomingCount(data.upcoming_count);
           setCompletedCount(data.completed_count);
           setLoading(false);
@@ -56,18 +57,18 @@ const Home = props => {
               padding: 20,
               flex: 3,
             }}>
-            <TouchableHighlight
+            <TouchableOpacity
               onPress={() => props.navigation.navigate('Upcoming')}>
               <Text style={{fontSize: 15, color: 'white'}}>
                 {upcomingCount} booked
               </Text>
-            </TouchableHighlight>
-            <TouchableHighlight
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => props.navigation.navigate('Completed')}>
               <Text style={{fontSize: 15, color: 'white'}}>
                 {completedCount} accomplished
               </Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         </View>
         <View style={{flex: 7}}>
@@ -124,22 +125,26 @@ const Home = props => {
               }}>
               New
             </Text>
-            {classes.map(c => (
+            {sessions.map(s => (
               <Card
-                key={classes.indexOf(c)}
+                key={sessions.indexOf(s)}
                 image={require('../common/assets/images/home.screen.3.jpeg')}>
-                <Text style={{marginBottom: 10, fontSize: 17}}>{c.name}</Text>
+                <Text style={{marginBottom: 10, fontSize: 17}}>
+                  {s.classinfo.name}
+                </Text>
                 <Text
                   style={{marginBottom: 10, color: '#999'}}
                   numberOfLines={3}>
-                  {c.general_info}
+                  {s.classinfo.general_info}
                 </Text>
                 <Button
                   type="clear"
                   title="Book now"
                   style={{alignSelf: 'flex-start'}}
                   onPress={() => {
-                    props.navigation.navigate('ClassDetail', {id: c.id});
+                    props.navigation.navigate('ClassDetail', {
+                      id: s.classinfo.id,
+                    });
                   }}
                 />
               </Card>

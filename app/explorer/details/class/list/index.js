@@ -19,13 +19,13 @@ import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../../../../common/assets/color/color';
 import {STATUS} from '../../../../common/constants';
 const ExploreClassList = props => {
-  const [classes, setClasses] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
         let response = await axiosService.get(
-          'classinfos/date/' +
+          'sessions/date/' +
             props.date +
             '?min_hour=' +
             props.minHour +
@@ -58,7 +58,7 @@ const ExploreClassList = props => {
           props.navigation.navigate('Login');
         } else {
           let {data} = response;
-          setClasses(data);
+          setSessions(data);
           setLoading(false);
         }
       })();
@@ -67,12 +67,12 @@ const ExploreClassList = props => {
   if (!loading) {
     return (
       <ScrollView>
-        {classes.map(classInfo => (
+        {sessions.map(session => (
           <TouchableOpacity
-            key={classInfo.id}
+            key={session.id}
             onPress={() => {
               props.navigation.navigate('ClassDetail', {
-                id: classInfo.id,
+                id: session.id,
               });
             }}>
             <View
@@ -84,33 +84,33 @@ const ExploreClassList = props => {
               }}>
               <View style={{flex: 2, flexDirection: 'column'}}>
                 <Text>
-                  {new Date(classInfo.time).toLocaleTimeString('en-us', {
+                  {new Date(session.time).toLocaleTimeString('en-us', {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
                 </Text>
                 <Text style={styles.center_gray}>
-                  {classInfo.duration_in_min}
+                  {session.duration_in_min}
                 </Text>
                 <Text style={styles.center_gray}>min</Text>
               </View>
               <View style={{flex: 8, flexDirection: 'column'}}>
                 <Text style={{fontSize: 17}} numberOfLines={1}>
-                  {classInfo.name}
+                  {session.classinfo.name}
                 </Text>
                 <Text style={{color: '#999'}}>
-                  {classInfo.institution.name}
+                  {session.classinfo.institution.name}
                 </Text>
                 <View style={{flexDirection: 'row'}}>
                   <AirbnbRating
                     count={5}
-                    defaultRating={classInfo.institution.star_num}
+                    defaultRating={session.classinfo.institution.star_num}
                     showRating={false}
                     size={15}
                     isDisabled={true}
                   />
                   <Text style={styles.center_gray}>
-                    {classInfo.institution.star_num}/5
+                    {session.classinfo.institution.star_num}/5
                   </Text>
                 </View>
               </View>

@@ -48,6 +48,7 @@ const Login = props => {
               password: 'ryon',
               email: email,
             });
+            console.log(response);
             if (response.status === STATUS.OK) {
               let {data} = response;
               try {

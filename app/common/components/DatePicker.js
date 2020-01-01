@@ -19,7 +19,13 @@ const DatePicker = props => {
 
   const handleDatePicked = value => {
     closePicker();
-    refDate.current.setValue(value.toLocaleDateString());
+    console.log(props);
+    if (props.type.endsWith('time')) {
+      refDate.current.setValue(value.toLocaleString());
+    } else {
+      refDate.current.setValue(value.toLocaleDateString());
+    }
+
     if (props.values && props.name) {
       props.values[props.name] = value;
     }
@@ -39,6 +45,7 @@ const DatePicker = props => {
         onConfirm={handleDatePicked}
         onCancel={closePicker}
         {...props}
+        mode={'datetime'}
       />
     </React.Fragment>
   );

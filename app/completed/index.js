@@ -8,26 +8,22 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {Text, Card, AirbnbRating, Button, Overlay} from 'react-native-elements';
-import AsyncStorage from '@react-native-community/async-storage';
 import {useFocusEffect} from 'react-navigation-hooks';
 import colors from '../common/assets/color/color';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {STATUS} from '../common/constants';
 import axiosService from '../common/clients/api';
 const Completed = props => {
-  const [classes, setClasses] = useState([]);
-  const [classInfo, setClassInfo] = useState({});
+  const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [visible, setVisible] = useState(false);
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
-        let response = await axiosService.get('/classinfos/completed');
+        let response = await axiosService.get('/sessions/completed');
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
           let {data} = response;
-          setClasses(data);
+          setSessions(data);
           setLoading(false);
         }
       })();
@@ -38,17 +34,17 @@ const Completed = props => {
       <SafeAreaView style={styles.mainContainer}>
         <View style={{flex: 7}}>
           <ScrollView style={{padding: 20}}>
-            {classes.map(classInfo => (
+            {sessions.map(session => (
               <Card
                 image={require('../common/assets/images/home.screen.1.jpeg')}>
                 <TouchableOpacity
                   onPress={() => {
                     props.navigation.navigate('ClassDetail', {
-                      id: classInfo.id,
+                      id: session.id,
                     });
                   }}>
                   <Text style={{marginBottom: 10, fontSize: 17}}>
-                    {classInfo.name}
+                    {session.classinfo.name}
                   </Text>
                 </TouchableOpacity>
                 <View
@@ -66,12 +62,12 @@ const Completed = props => {
                       paddingHorizontal: 5,
                     }}>
                     <Text>
-                      {new Date(classInfo.time).toLocaleTimeString([], {
+                      {new Date(session.time).toLocaleTimeString([], {
                         timeStyle: 'short',
                       })}
                     </Text>
                     <Text style={styles.center_gray}>
-                      {classInfo.duration_in_min}
+                      {session.duration_in_min}
                     </Text>
                     <Text style={styles.center_gray}>min</Text>
                   </View>
@@ -80,23 +76,23 @@ const Completed = props => {
                       onPress={() => {
                         console.log('ryon');
                         props.navigation.navigate('InstitutionDetail', {
-                          id: classInfo.institution.id,
+                          id: session.classinfo.institution.id,
                         });
                       }}>
                       <Text style={{color: '#999'}}>
-                        {classInfo.institution.name}
+                        {session.classinfo.institution.name}
                       </Text>
                     </TouchableOpacity>
                     <View style={{flexDirection: 'row'}}>
                       <AirbnbRating
                         count={5}
-                        defaultRating={classInfo.institution.star_num}
+                        defaultRating={session.classinfo.institution.star_num}
                         showRating={false}
                         size={15}
                         isDisabled={true}
                       />
                       <Text style={styles.center_gray}>
-                        {classInfo.institution.star_num}/5{' '}
+                        {session.classinfo.institution.star_num}/5{' '}
                       </Text>
                     </View>
                   </View>

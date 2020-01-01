@@ -14,19 +14,19 @@ import {STATUS} from '../../../../../common/constants';
 import axiosService from '../../../../../common/clients/api';
 import {NavigationActions, StackActions} from 'react-navigation';
 const CalendarClassList = props => {
-  const [classes, setClasses] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
         let response = await axiosService.get(
-          '/institutions/' + props.institution_id + '/classes/' + props.date,
+          '/institutions/' + props.institution_id + '/sessions/' + props.date,
         );
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
           let {data} = response;
-          setClasses(data);
+          setSessions(data);
           setLoading(false);
         }
       })();
@@ -35,12 +35,11 @@ const CalendarClassList = props => {
   if (!loading) {
     return (
       <ScrollView>
-        {classes.map(classInfo => (
+        {sessions.map(session => (
           <TouchableOpacity
             onPress={() => {
               props.navigation.navigate('ClassDetail', {
-                id: props.institution_id,
-                name: props.institution_name,
+                id: session.id,
               });
             }}>
             <View
@@ -52,19 +51,19 @@ const CalendarClassList = props => {
               }}>
               <View style={{flex: 2, flexDirection: 'column'}}>
                 <Text>
-                  {new Date(classInfo.time).toLocaleTimeString('en-us', {
+                  {new Date(session.time).toLocaleTimeString('en-us', {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
                 </Text>
                 <Text style={styles.center_gray}>
-                  {classInfo.duration_in_min}
+                  {session.duration_in_min}
                 </Text>
                 <Text style={styles.center_gray}>min</Text>
               </View>
               <View style={{flex: 8, flexDirection: 'column'}}>
                 <Text style={{fontSize: 17}} numberOfLines={1}>
-                  {classInfo.name}
+                  {session.classinfo.name}
                 </Text>
               </View>
             </View>

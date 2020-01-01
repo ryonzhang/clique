@@ -4,31 +4,16 @@ import {
   SafeAreaView,
   StyleSheet,
   View,
-  ScrollView,
   TouchableOpacity,
-  Platform,
   Dimensions,
 } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import {LEVELS, STATUS} from '../../common/constants';
-import {
-  Input,
-  Text,
-  Divider,
-  AirbnbRating,
-  Overlay,
-  Card,
-  Button,
-  Slider,
-} from 'react-native-elements';
+import {LEVELS} from '../../common/constants';
+import {Input, Text, Divider, Overlay, Button} from 'react-native-elements';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import TabBar from 'react-native-underline-tabbar';
-import CompletedList from '../../completed/list';
-import FavoriteInstitutionList from '../details/institution/list';
-import FriendsList from '../../friend/list';
 import ExploreClassList from '../details/class/list';
-import AsyncStorage from '@react-native-community/async-storage';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {useFocusEffect} from 'react-navigation-hooks';
 import {hasLocationPermission} from '../../common/functions';

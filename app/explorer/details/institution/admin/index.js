@@ -9,7 +9,10 @@ import {
 import colors from '../../../../common/assets/color/color';
 import FavoriteInstitutionList from '../list';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import {Fab, Icon} from 'native-base';
+import {Button} from 'react-native-elements';
 const Admin = props => {
+  const [active, setActive] = useState(false);
   return (
     <SafeAreaView style={styles.safeContainer}>
       <FavoriteInstitutionList {...props} />
@@ -26,6 +29,15 @@ Admin.navigationOptions = screenProps => ({
         screenProps.navigation.openDrawer();
       }}>
       <FontAwesome5Icon name="bars" size={25} color={'black'} />
+    </TouchableOpacity>
+  ),
+  headerRight: () => (
+    <TouchableOpacity
+      style={{paddingRight: 20, flex: 1}}
+      onPress={() => {
+        screenProps.navigation.navigate('InstitutionEdit');
+      }}>
+      <FontAwesome5Icon name="plus" size={25} color={'black'} />
     </TouchableOpacity>
   ),
 });

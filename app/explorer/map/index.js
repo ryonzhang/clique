@@ -237,6 +237,7 @@ const Map = props => {
             description={institution.general_info}
             onPress={() => {
               setIndex(institutions.indexOf(institution));
+              console.log(institutions.indexOf(institution));
               refCarousel.current.snapToItem(
                 institutions.indexOf(institution),
                 true,

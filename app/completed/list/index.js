@@ -14,19 +14,19 @@ import {STATUS} from '../../common/constants';
 import {NavigationActions, StackActions} from 'react-navigation';
 import axiosService from '../../common/clients/api';
 const CompletedList = props => {
-  const [classes, setClasses] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
         let response = await axiosService.get(
-          '/classinfos/completed/' + (props.user_id || ''),
+          '/sessions/completed/' + (props.user_id || ''),
         );
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
           let {data} = response;
-          setClasses(data);
+          setSessions(data);
           setLoading(false);
           props.onLoad(data.length);
         }
@@ -36,11 +36,11 @@ const CompletedList = props => {
   if (!loading) {
     return (
       <>
-        {classes.map(classInfo => (
+        {sessions.map(session => (
           <TouchableOpacity
             onPress={() => {
               props.navigation.navigate('ClassDetail', {
-                id: classInfo.id,
+                id: session.id,
               });
             }}>
             <View
@@ -53,17 +53,17 @@ const CompletedList = props => {
               }}>
               <View style={{flex: 4, flexDirection: 'column'}}>
                 <Text>
-                  {new Date(classInfo.time).toLocaleTimeString('en-us', {
+                  {new Date(session.time).toLocaleTimeString('en-us', {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
                 </Text>
 
                 <Text style={styles.center_gray}>
-                  {classInfo.duration_in_min} min
+                  {session.duration_in_min} min
                 </Text>
                 <Text style={styles.center_gray}>
-                  {new Date(classInfo.time).toLocaleDateString('en-us', {
+                  {new Date(session.time).toLocaleDateString('en-us', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
@@ -72,12 +72,12 @@ const CompletedList = props => {
               </View>
               <View style={{flex: 8, flexDirection: 'column'}}>
                 <Text style={{fontSize: 17}} numberOfLines={1}>
-                  {classInfo.name}
+                  {session.classinfo.name}
                 </Text>
                 <Text
                   style={{fontSize: 14, paddingTop: 5, color: 'gray'}}
                   numberOfLines={1}>
-                  {classInfo.institution.name}
+                  {session.classinfo.institution.name}
                 </Text>
               </View>
             </View>

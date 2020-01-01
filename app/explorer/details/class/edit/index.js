@@ -93,7 +93,7 @@ const ClassEdit = props => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [classInfo, setClass] = useState(
-    props.navigation.state.params.classInfo,
+    props.navigation.getParam('classInfo') || {},
   );
   useFocusEffect(
     React.useCallback(
@@ -117,11 +117,17 @@ const ClassEdit = props => {
               validate={validate}
               onSubmit={values => {
                 (async function() {
-                  let response = await axiosService.post(
-                    '/classinfos/update/' + classInfo.id,
-                    values,
-                  );
-                  if (response.status === STATUS.ACCEPTED) {
+                  values.institution_id = props.navigation.getParam('institution_id');
+                  let response = classInfo.id
+                    ? await axiosService.post(
+                        '/classinfos/update/' + classInfo.id,
+                        values,
+                      )
+                    : await axiosService.post('/classinfos/', values);
+                  if (
+                    response.status === STATUS.ACCEPTED ||
+                    response.status === STATUS.CREATED
+                  ) {
                     setClass(values);
                     alert('Your account has been updated');
                   } else {
@@ -185,25 +191,39 @@ const ClassEdit = props => {
                     onChange={handleChange}
                   />
                   <FocusedDatePicker
-                    label="Bookable before"
-                    name="bookable_before"
-                    type="bookable_before"
+                    label="Start Datetime"
+                    name="time"
+                    type="time"
                     value={
-                      values.bookable_before
-                        ? new Date(values.bookable_before).toLocaleDateString()
+                      values.time
+                        ? new Date(values.time).toLocaleString()
                         : null
                     }
                     values={values}
                   />
                   <FocusedDatePicker
-                    label="Bookable after"
-                    name="bookable_after"
-                    type="bookable_after"
+                    label="End Datetime"
+                    name="endtime"
+                    type="endtime"
                     value={
-                      values.bookable_after
-                        ? new Date(values.bookable_after).toLocaleDateString()
+                      values.endtime
+                        ? new Date(values.endtime).toLocaleString()
                         : null
                     }
+                    values={values}
+                  />
+                  <MyInput
+                      label="Duration in mins"
+                      name="duration_in_min"
+                      type="duration_in_min"
+                      value={values.duration_in_min}
+                      onChange={handleChange}
+                  />
+                  <MyInput
+                    label="Frequency in days"
+                    name="days_in_between"
+                    type="days_in_between"
+                    value={values.days_in_between}
                     values={values}
                   />
                   <MyInput

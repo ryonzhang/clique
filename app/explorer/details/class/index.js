@@ -61,7 +61,7 @@ const actions = [
 ];
 
 const ClassDetail = props => {
-  const [classInfo, setClassInfo] = useState({});
+  const [session, setSession] = useState({});
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -79,13 +79,13 @@ const ClassDetail = props => {
       })();
       (async function() {
         let response = await axiosService.get(
-          '/classinfos/' + props.navigation.state.params.id,
+          '/sessions/' + props.navigation.state.params.id,
         );
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
           let {data} = response;
-          setClassInfo(data.classinfo);
+          setSession(data.session);
           setStatus(data.status);
           switch (status) {
             case 'booked':
@@ -121,12 +121,12 @@ const ClassDetail = props => {
         break;
       case 'attended':
         props.navigation.navigate('FeedbackClass', {
-          classinfo: classInfo,
+          session: session,
         });
         break;
       case 'feedbacked':
         props.navigation.navigate('FeedbackClass', {
-          classinfo: classInfo,
+          session: session,
         });
         break;
       case 'open':
@@ -149,7 +149,7 @@ const ClassDetail = props => {
               <Card
                 image={require('../../../common/assets/images/home.screen.1.jpeg')}>
                 <Text style={{marginBottom: 10, fontSize: 17}}>
-                  {classInfo.name}
+                  {session.classinfo.name}
                 </Text>
 
                 <View
@@ -166,29 +166,29 @@ const ClassDetail = props => {
                       flexDirection: 'column',
                     }}>
                     <Text>
-                      {new Date(classInfo.time).toLocaleTimeString('en-GB', {
+                      {new Date(session.time).toLocaleTimeString('en-GB', {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}
                     </Text>
                     <Text style={styles.center_gray}>
-                      {classInfo.duration_in_min} min
+                      {session.duration_in_min} min
                     </Text>
                   </View>
                   <View style={{flex: 8, flexDirection: 'column'}}>
                     <Text style={{color: '#999'}}>
-                      {classInfo.institution.name}
+                      {session.classinfo.institution.name}
                     </Text>
                     <View style={{flexDirection: 'row'}}>
                       <AirbnbRating
                         count={5}
-                        defaultRating={classInfo.institution.star_num}
+                        defaultRating={session.classinfo.institution.star_num}
                         showRating={false}
                         size={15}
                         isDisabled={true}
                       />
                       <Text style={styles.center_gray}>
-                        {classInfo.institution.star_num}/5{' '}
+                        {session.classinfo.institution.star_num}/5{' '}
                       </Text>
                     </View>
                   </View>
@@ -200,15 +200,13 @@ const ClassDetail = props => {
                   onPress={() => {
                     (async function() {
                       let response = await axiosService.post(
-                        '/classinfos/' +
+                        '/sessions/' +
                           (status === 'open' ? 'link/' : 'delink/') +
-                          classInfo.id,
+                          session.id,
                       );
                       if (response.status === STATUS.ACCEPTED) {
                         setVisible(false);
-                        props.navigation.navigate('Upcoming', {
-                          id: classInfo.id,
-                        });
+                        props.navigation.navigate('Upcoming');
                       } else {
                         alert('Not link the class, contact us please');
                       }
@@ -269,21 +267,21 @@ const ClassDetail = props => {
           </View>
         </TouchableOpacity>
         <ScrollView style={{padding: 14}}>
-          <Text h3>{classInfo.name}</Text>
+          <Text h3>{session.classinfo.name}</Text>
           <Text style={[styles.markedText, {paddingTop: 20}]}>
-            {new Date(classInfo.time).toLocaleTimeString('en-GB', {
+            {new Date(session.time).toLocaleTimeString('en-GB', {
               hour: '2-digit',
               minute: '2-digit',
             })}{' '}
             -{' '}
-            {new Date(classInfo.time)
-              .addMinutes(classInfo.duration_in_min)
+            {new Date(session.time)
+              .addMinutes(session.duration_in_min)
               .toLocaleTimeString('en-GB', {
                 hour: '2-digit',
                 minute: '2-digit',
               })}
             ,{' '}
-            {new Date(classInfo.time).toLocaleDateString('en-us', {
+            {new Date(session.time).toLocaleDateString('en-us', {
               weekday: 'short',
               year: 'numeric',
               month: 'short',
@@ -291,11 +289,11 @@ const ClassDetail = props => {
             })}
           </Text>
           <Text style={[styles.markedText, {paddingBottom: 20}]}>
-            {classInfo.institution.name}
+            {session.classinfo.institution.name}
           </Text>
           <Divider />
           <Text style={[styles.markedText, {paddingTop: 20}]}>
-            Level: {LEVELS[classInfo.level]}
+            Level: {LEVELS[session.classinfo.level]}
           </Text>
           <View
             style={{
@@ -304,7 +302,7 @@ const ClassDetail = props => {
               flexWrap: 'wrap',
             }}>
             <Text style={styles.markedText}>Category:</Text>
-            {classInfo.categories.map(c => (
+            {session.classinfo.categories.map(c => (
               <Badge
                 key={c.id}
                 status="success"
@@ -322,7 +320,7 @@ const ClassDetail = props => {
               paddingVertical: 10,
             }}>
             <Text style={styles.markedText}>Tags:</Text>
-            {classInfo.tags.map(c => (
+            {session.classinfo.tags.map(c => (
               <Badge
                 key={c.id}
                 status="success"
@@ -338,21 +336,21 @@ const ClassDetail = props => {
           <View style={{flexDirection: 'row'}}>
             <AirbnbRating
               count={5}
-              defaultRating={classInfo.institution.star_num}
+              defaultRating={session.classinfo.institution.star_num}
               showRating={false}
               size={15}
               isDisabled={true}
             />
 
             <Text style={{color: 'gray', paddingLeft: 10, top: 3}}>
-              {classInfo.institution.star_num}/5 according to{' '}
-              {classInfo.institution.feedback_count} feedbacks
+              {session.classinfo.institution.star_num}/5 according to{' '}
+              {session.classinfo.institution.feedback_count} feedbacks
             </Text>
           </View>
           <TouchableOpacity
             onPress={() => {
               props.navigation.navigate('Feedback', {
-                institution: classInfo.institution,
+                institution: session.classinfo.institution,
               });
             }}>
             <Text style={[styles.mainText, {color: 'blue'}]}>
@@ -361,60 +359,67 @@ const ClassDetail = props => {
           </TouchableOpacity>
           <Divider />
           <Text style={styles.subtitle}>About the class</Text>
-          <Text style={styles.mainText}>{classInfo.general_info}</Text>
+          <Text style={styles.mainText}>{session.classinfo.general_info}</Text>
           <Divider />
           <Text style={styles.subtitle}>Location</Text>
           <Text style={styles.mainText}>
-            {classInfo.institution.unit} {classInfo.institution.building}{' '}
-            {classInfo.institution.street},{classInfo.institution.city},
-            {classInfo.institution.province},{classInfo.institution.country},
-            {classInfo.institution.zipcode}
+            {session.classinfo.institution.unit}{' '}
+            {session.classinfo.institution.building}{' '}
+            {session.classinfo.institution.street},
+            {session.classinfo.institution.city},
+            {session.classinfo.institution.province},
+            {session.classinfo.institution.country},
+            {session.classinfo.institution.zipcode}
           </Text>
           <View style={{padding: 10, alignSelf: 'center'}}>
             <MapView
               style={{width: width * 0.8, height: 250}}
               region={{
-                latitude: parseFloat(classInfo.institution.latitude),
-                longitude: parseFloat(classInfo.institution.longitude),
+                latitude: parseFloat(session.classinfo.institution.latitude),
+                longitude: parseFloat(session.classinfo.institution.longitude),
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
               }}>
               <Marker
                 coordinate={{
-                  latitude: parseFloat(classInfo.institution.latitude),
-                  longitude: parseFloat(classInfo.institution.longitude),
+                  latitude: parseFloat(session.classinfo.institution.latitude),
+                  longitude: parseFloat(
+                    session.classinfo.institution.longitude,
+                  ),
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.0421,
                 }}
-                title={classInfo.institution.name}
-                description={classInfo.institution.general_info}
+                title={session.classinfo.institution.name}
+                description={session.classinfo.institution.general_info}
               />
             </MapView>
           </View>
           <Divider />
           <Text style={styles.subtitle}>Preparation</Text>
-          <Text style={styles.mainText}>{classInfo.preparation_info}</Text>
+          <Text style={styles.mainText}>
+            {session.classinfo.preparation_info}
+          </Text>
           <Divider />
           <Text style={styles.subtitle}>When to arrive?</Text>
           <Text style={styles.mainText}>
-            {classInfo.arrival_ahead_in_min} minutes before
+            {session.classinfo.arrival_ahead_in_min} minutes before
           </Text>
           <Divider />
           <Text style={styles.subtitle}>How to arrive?</Text>
           <Text style={styles.mainText}>
-            {classInfo.institution.location_instruction}
+            {session.classinfo.institution.location_instruction}
           </Text>
           <Button
-            title={classInfo.institution.name}
+            title={session.classinfo.institution.name}
             type="outline"
             onPress={() => {
               props.navigation.navigate('InstitutionDetail', {
-                id: classInfo.institution_id,
+                id: session.classinfo.institution_id,
               });
             }}
           />
           <Text style={[styles.mainText, {color: 'gray'}]}>
-            {classInfo.additional_info}
+            {session.classinfo.additional_info}
           </Text>
         </ScrollView>
         <Fab
@@ -431,7 +436,7 @@ const ClassDetail = props => {
             style={{backgroundColor: '#34A34F'}}
             onPress={() => {
               props.navigation.navigate('ClassEdit', {
-                classInfo: classInfo,
+                classInfo: session.classinfo,
               });
             }}>
             <Icon name="edit" type={'AntDesign'} />

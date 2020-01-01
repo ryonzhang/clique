@@ -92,7 +92,7 @@ function getErrorsFromValidationError(validationError) {
 const InstitutionEdit = props => {
   const [loading, setLoading] = useState(true);
   const [institution, setInstitution] = useState(
-    props.navigation.state.params.institution,
+    props.navigation.getParam('institution') || {},
   );
   console.log(institution);
   // if (!loading) {
@@ -104,10 +104,12 @@ const InstitutionEdit = props => {
           validate={validate}
           onSubmit={values => {
             (async function() {
-              let response = await axiosService.post(
-                '/institutions/update/' + institution.id,
-                values,
-              );
+              let response = institution.id
+                ? await axiosService.post(
+                    '/institutions/update/' + institution.id,
+                    values,
+                  )
+                : await axiosService.post('/institutions/', values);
               if (response.status === STATUS.ACCEPTED) {
                 setInstitution(values);
                 alert('Your account has been updated');

@@ -58,6 +58,15 @@ const Calendar = props => {
   );
   Calendar.navigationOptions = screenProps => ({
     headerTitle: screenProps.navigation.getParam('name'),
+    headerRight: () => (
+      <TouchableOpacity
+        style={{paddingRight: 20, flex: 1}}
+        onPress={() => {
+          screenProps.navigation.navigate('ClassEdit',{institution_id:screenProps.navigation.getParam('id')});
+        }}>
+        <FontAwesome5Icon name="plus" size={25} color={'black'} />
+      </TouchableOpacity>
+    ),
   });
   const dates = Date.getDaysInDays(14);
   return (

@@ -86,6 +86,9 @@ const AdminNavigator = createStackNavigator(
 
     ClassEdit: {
       screen: ClassEdit,
+      navigationOptions: ({navigation}) => ({
+        headerTitle: 'Input your class information',
+      }),
     },
     Profile: {
       screen: Profile,

@@ -14,19 +14,19 @@ import {STATUS} from '../../common/constants';
 import {NavigationActions, StackActions} from 'react-navigation';
 import axiosService from '../../common/clients/api';
 const UpcomingList = props => {
-  const [classes, setClasses] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   useFocusEffect(
     React.useCallback(() => {
       (async function() {
         let response = await axiosService.get(
-          'classinfos/upcoming/' + (props.user_id || ''),
+          '/sessions/upcoming/' + (props.user_id || ''),
         );
         if (response.status === STATUS.UNPROCESSED_ENTITY) {
           props.navigation.navigate('Login');
         } else {
           let {data} = response;
-          setClasses(data);
+          setSessions(data);
           setLoading(false);
           props.onLoad(data.length);
         }
@@ -36,28 +36,12 @@ const UpcomingList = props => {
   if (!loading) {
     return (
       <>
-        {classes.map(classInfo => (
+        {sessions.map(session => (
           <TouchableOpacity
             onPress={() => {
-              const resetAction = StackActions.reset({
-                index: 1,
-                actions: [
-                  NavigationActions.navigate({
-                    routeName: 'Profile',
-                    params: {
-                      id: props.institution_id,
-                      name: props.institution_name,
-                    },
-                  }),
-                  NavigationActions.navigate({
-                    routeName: 'ClassDetail',
-                    params: {
-                      id: classInfo.id,
-                    },
-                  }),
-                ],
+              props.navigation.navigate('ClassDetail', {
+                id: session.id,
               });
-              props.navigation.dispatch(resetAction);
             }}>
             <View
               tabLabel={{label: 'Previous', badge: 3}}
@@ -69,17 +53,17 @@ const UpcomingList = props => {
               }}>
               <View style={{flex: 4, flexDirection: 'column'}}>
                 <Text>
-                  {new Date(classInfo.time).toLocaleTimeString('en-us', {
+                  {new Date(session.time).toLocaleTimeString('en-us', {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
                 </Text>
 
                 <Text style={styles.center_gray}>
-                  {classInfo.duration_in_min} min
+                  {session.duration_in_min} min
                 </Text>
                 <Text style={styles.center_gray}>
-                  {new Date(classInfo.time).toLocaleDateString('en-us', {
+                  {new Date(session.time).toLocaleDateString('en-us', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
@@ -88,12 +72,12 @@ const UpcomingList = props => {
               </View>
               <View style={{flex: 8, flexDirection: 'column'}}>
                 <Text style={{fontSize: 17}} numberOfLines={1}>
-                  {classInfo.name}
+                  {session.classinfo.name}
                 </Text>
                 <Text
                   style={{fontSize: 14, paddingTop: 5, color: 'gray'}}
                   numberOfLines={1}>
-                  {classInfo.institution.name}
+                  {session.classinfo.institution.name}
                 </Text>
               </View>
             </View>
