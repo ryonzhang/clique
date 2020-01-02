@@ -44,29 +44,42 @@ const Login = props => {
           containerStyle={styles.padding_top_10}
           title="Log in"
           onPress={async () => {
-            let response = await axiosService.post('/auth/login', {
-              password: 'ryon',
-              email: email,
-            });
-            console.log(response);
-            if (response.status === STATUS.OK) {
-              let {data} = response;
-              try {
+            axiosService
+              .post('/auth/login', {
+                password: 'ryon',
+                email: email,
+              })
+              .then(async response => {
+                let {data} = response;
                 await AsyncStorage.setItem('@token', data.auth_token);
                 await AsyncStorage.setItem('@user', JSON.stringify(data.user));
-              } catch (e) {
+                props.navigation.navigate('Home');
+              })
+              .catch(err => {
+                console.log(err);
                 alert(
-                  'Unable to save token on the devise, please revise your access rights',
+                  'The password or username is wrong',
                 );
-              }
-
-              console.log(data);
-              props.navigation.navigate('Home');
-            } else {
-              alert(
-                'Your email and password combination is not correct,have another try?',
-              );
-            }
+                return null;
+              });
+            // console.log(response);
+            // if (response.status === STATUS.OK) {
+            //   let {data} = response;
+            //   try {
+            //     await AsyncStorage.setItem('@token', data.auth_token);
+            //     await AsyncStorage.setItem('@user', JSON.stringify(data.user));
+            //   } catch (e) {
+            //     alert(
+            //       'Unable to save token on the devise, please revise your access rights',
+            //     );
+            //   }
+            //   console.log(data);
+            //   props.navigation.navigate('Home');
+            // } else {
+            //   alert(
+            //     'Your email and password combination is not correct,have another try?',
+            //   );
+            // }
           }}
         />
 

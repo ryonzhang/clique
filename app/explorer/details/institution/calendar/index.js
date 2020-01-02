@@ -62,7 +62,9 @@ const Calendar = props => {
       <TouchableOpacity
         style={{paddingRight: 20, flex: 1}}
         onPress={() => {
-          screenProps.navigation.navigate('ClassEdit',{institution_id:screenProps.navigation.getParam('id')});
+          screenProps.navigation.navigate('ClassEdit', {
+            institution_id: screenProps.navigation.getParam('id'),
+          });
         }}>
         <FontAwesome5Icon name="plus" size={25} color={'black'} />
       </TouchableOpacity>

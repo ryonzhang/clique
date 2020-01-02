@@ -117,7 +117,9 @@ const ClassEdit = props => {
               validate={validate}
               onSubmit={values => {
                 (async function() {
-                  values.institution_id = props.navigation.getParam('institution_id');
+                  values.institution_id = props.navigation.getParam(
+                    'institution_id',
+                  );
                   let response = classInfo.id
                     ? await axiosService.post(
                         '/classinfos/update/' + classInfo.id,
@@ -213,11 +215,11 @@ const ClassEdit = props => {
                     values={values}
                   />
                   <MyInput
-                      label="Duration in mins"
-                      name="duration_in_min"
-                      type="duration_in_min"
-                      value={values.duration_in_min}
-                      onChange={handleChange}
+                    label="Duration in mins"
+                    name="duration_in_min"
+                    type="duration_in_min"
+                    value={values.duration_in_min}
+                    onChange={handleChange}
                   />
                   <MyInput
                     label="Frequency in days"

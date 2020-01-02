@@ -53,7 +53,7 @@ import Admin from './app/explorer/details/institution/admin';
 // Experiment
 import TabViewExample from './app/experiment/tab';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-
+import DateTimePickerApp from './app/common/components/DateTimePicker';
 const AdminNavigator = createStackNavigator(
   {
     Calendar: {

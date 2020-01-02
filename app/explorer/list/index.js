@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState} from 'react';
 import {
+  ScrollView,
   SafeAreaView,
   StyleSheet,
   View,
@@ -59,7 +60,7 @@ const List = props => {
   const [maxCredit, setMaxCredit] = useState(30);
   const [minLevel, setMinLevel] = useState(1);
   const [maxLevel, setMaxLevel] = useState(4);
-  const [minAge, setMinAge] = useState(5);
+  const [minAge, setMinAge] = useState(0);
   const [maxAge, setMaxAge] = useState(30);
   const [minDistance, setMinDistance] = useState(0.0);
   const [maxDistance, setMaxDistance] = useState(30.0);
@@ -107,6 +108,7 @@ const List = props => {
         width={width}
         height={height}
         onBackdropPress={() => setVisible(false)}>
+        <ScrollView>
         <View style={{flex: 1}}>
           <View style={{padding: 20}}>
             <Text style={{fontSize: 22}}>Credits</Text>
@@ -228,7 +230,7 @@ const List = props => {
           <Divider />
           <View style={{padding: 20}}>
             <Text style={{fontSize: 22}}>Age</Text>
-            <Text style={{fontSize: 15, color: 'gray'}}>5 to 30 years old</Text>
+            <Text style={{fontSize: 15, color: 'gray'}}>0 to 30 years old</Text>
 
             <MultiSlider
               values={[minAge, maxAge]}
@@ -263,6 +265,7 @@ const List = props => {
             }}
           />
         </View>
+        </ScrollView>
       </Overlay>
       <View>
         <View style={{flexDirection: 'row', zIndex: 10, elevation: 7}}>
