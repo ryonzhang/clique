@@ -1,16 +1,16 @@
-import React, {useState, useEffect} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   View,
   ScrollView,
-  TouchableHighlight,
   ActivityIndicator,
   TouchableOpacity,
+  InteractionManager,
 } from 'react-native';
 import {useFocusEffect} from 'react-navigation-hooks';
 import {Button, Text, Card} from 'react-native-elements';
-import AsyncStorage from '@react-native-community/async-storage';
 import colors from '../common/assets/color/color';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {STATUS} from '../common/constants';
@@ -20,21 +20,27 @@ const Home = props => {
   const [upcomingCount, setUpcomingCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  console.log('ryon');
   useFocusEffect(
     React.useCallback(() => {
-      (async function() {
-        let response = await axiosService.get('/sessions/new');
-        if (response.status === STATUS.UNPROCESSED_ENTITY) {
-          props.navigation.navigate('Login');
-        } else {
-          let {data} = response;
-          setSessions(data.sessions);
-          setUpcomingCount(data.upcoming_count);
-          setCompletedCount(data.completed_count);
-          setLoading(false);
-        }
-      })();
-    }, [props.navigation]),
+      const task = InteractionManager.runAfterInteractions(() => {
+        (async function() {
+          console.log('object', axiosService);
+          let response = await axiosService.get('/sessions/new');
+
+          if (response.status === STATUS.UNPROCESSED_ENTITY) {
+            props.navigation.navigate('Login');
+          } else {
+            let {data} = response;
+            setSessions(data.sessions);
+            setUpcomingCount(data.upcoming_count);
+            setCompletedCount(data.completed_count);
+            setLoading(false);
+          }
+        })();
+      });
+      return () => task.cancel();
+    }, []),
   );
   if (!loading) {
     return (

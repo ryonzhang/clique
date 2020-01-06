@@ -3,7 +3,6 @@ import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Button, Input} from 'react-native-elements';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../../common/assets/color/color';
-import {STATUS} from '../../common/constants';
 import axiosService from '../../common/clients/api';
 import AsyncStorage from '@react-native-community/async-storage';
 const Login = props => {
@@ -53,33 +52,23 @@ const Login = props => {
                 let {data} = response;
                 await AsyncStorage.setItem('@token', data.auth_token);
                 await AsyncStorage.setItem('@user', JSON.stringify(data.user));
-                props.navigation.navigate('Home');
+                await axiosService.interceptors.request.use(
+                  async config => {
+                    config.headers.Authorization = data.auth_token;
+                    return config;
+                  },
+                  error => {
+                    return Promise.reject(error);
+                  },
+                );
+                // the id is passed to force re-render
+                props.navigation.navigate('Home', {id: 23});
               })
               .catch(err => {
                 console.log(err);
-                alert(
-                  'The password or username is wrong',
-                );
+                alert('The password or username is wrong');
                 return null;
               });
-            // console.log(response);
-            // if (response.status === STATUS.OK) {
-            //   let {data} = response;
-            //   try {
-            //     await AsyncStorage.setItem('@token', data.auth_token);
-            //     await AsyncStorage.setItem('@user', JSON.stringify(data.user));
-            //   } catch (e) {
-            //     alert(
-            //       'Unable to save token on the devise, please revise your access rights',
-            //     );
-            //   }
-            //   console.log(data);
-            //   props.navigation.navigate('Home');
-            // } else {
-            //   alert(
-            //     'Your email and password combination is not correct,have another try?',
-            //   );
-            // }
           }}
         />
 

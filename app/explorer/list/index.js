@@ -7,6 +7,7 @@ import {
   View,
   TouchableOpacity,
   Dimensions,
+  InteractionManager,
 } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import {LEVELS} from '../../common/constants';
@@ -72,33 +73,36 @@ const List = props => {
 
   useFocusEffect(
     React.useCallback(() => {
-      (async function() {
-        if (searchLng == 0 && searchLat == 0) {
-          const hasLocationPermissionValue = await hasLocationPermission();
-          //
-          if (!hasLocationPermissionValue) {
-            return;
-          }
+      const task = InteractionManager.runAfterInteractions(() => {
+        (async function() {
+          if (searchLng == 0 && searchLat == 0) {
+            const hasLocationPermissionValue = await hasLocationPermission();
+            //
+            if (!hasLocationPermissionValue) {
+              return;
+            }
 
-          await Geolocation.getCurrentPosition(
-            position => {
-              console.log(position);
-              setSearchLat(parseFloat(position.coords.latitude));
-              setSearchLng(parseFloat(position.coords.longitude));
-            },
-            error => {
-              error = error;
-            },
-            {
-              enableHighAccuracy: true,
-              timeout: 15000,
-              maximumAge: 10000,
-              distanceFilter: 50,
-              forceRequestLocation: true,
-            },
-          );
-        }
-      })();
+            await Geolocation.getCurrentPosition(
+              position => {
+                console.log(position);
+                setSearchLat(parseFloat(position.coords.latitude));
+                setSearchLng(parseFloat(position.coords.longitude));
+              },
+              error => {
+                error = error;
+              },
+              {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 10000,
+                distanceFilter: 50,
+                forceRequestLocation: true,
+              },
+            );
+          }
+        })();
+      });
+      return () => task.cancel();
     }, [searchLat, searchLng]),
   );
   return (
@@ -109,162 +113,166 @@ const List = props => {
         height={height}
         onBackdropPress={() => setVisible(false)}>
         <ScrollView>
-        <View style={{flex: 1}}>
-          <View style={{padding: 20}}>
-            <Text style={{fontSize: 22}}>Credits</Text>
-            <Text style={{fontSize: 15, color: 'gray'}}>0 to 30 credits</Text>
+          <View style={{flex: 1}}>
+            <View style={{padding: 20}}>
+              <Text style={{fontSize: 22}}>Credits</Text>
+              <Text style={{fontSize: 15, color: 'gray'}}>0 to 30 credits</Text>
 
-            <MultiSlider
-              values={[minCredit, maxCredit]}
-              sliderLength={280}
-              onValuesChange={values => {
-                setMinCredit(values[0]);
-                setMaxCredit(values[1]);
-              }}
-              min={0}
-              max={30}
-              step={1}
-              allowOverlap
-              snapped
-              selectedStyle={{
-                backgroundColor: 'green',
-              }}
-              unselectedStyle={{
-                backgroundColor: 'silver',
+              <MultiSlider
+                values={[minCredit, maxCredit]}
+                sliderLength={280}
+                onValuesChange={values => {
+                  setMinCredit(values[0]);
+                  setMaxCredit(values[1]);
+                }}
+                min={0}
+                max={30}
+                step={1}
+                allowOverlap
+                snapped
+                selectedStyle={{
+                  backgroundColor: 'green',
+                }}
+                unselectedStyle={{
+                  backgroundColor: 'silver',
+                }}
+              />
+
+              <Text style={{fontSize: 12, color: 'green'}}>
+                selected {minCredit} to {maxCredit} credits
+              </Text>
+            </View>
+            <Divider />
+            <View style={{padding: 20}}>
+              <Text style={{fontSize: 22}}>Distance</Text>
+              <Text style={{fontSize: 15, color: 'gray'}}>0 to 30 km</Text>
+
+              <MultiSlider
+                values={[minDistance, maxDistance]}
+                sliderLength={280}
+                onValuesChange={values => {
+                  setMinDistance(values[0]);
+                  setMaxDistance(values[1]);
+                }}
+                min={0}
+                max={30}
+                step={1}
+                allowOverlap
+                snapped
+                selectedStyle={{
+                  backgroundColor: 'green',
+                }}
+                unselectedStyle={{
+                  backgroundColor: 'silver',
+                }}
+              />
+
+              <Text style={{fontSize: 12, color: 'green'}}>
+                selected {minDistance} to {maxDistance} km
+              </Text>
+            </View>
+            <Divider />
+            <View style={{padding: 20}}>
+              <Text style={{fontSize: 22}}>Hours</Text>
+              <Text style={{fontSize: 15, color: 'gray'}}>
+                0 to 24 o'clock{' '}
+              </Text>
+
+              <MultiSlider
+                values={[minHour, maxHour]}
+                sliderLength={280}
+                onValuesChange={values => {
+                  setMinHour(values[0]);
+                  setMaxHour(values[1]);
+                }}
+                min={0}
+                max={24}
+                step={1}
+                allowOverlap
+                snapped
+                selectedStyle={{
+                  backgroundColor: 'green',
+                }}
+                unselectedStyle={{
+                  backgroundColor: 'silver',
+                }}
+              />
+
+              <Text style={{fontSize: 12, color: 'green'}}>
+                selected {minHour} to {maxHour} o'clock
+              </Text>
+            </View>
+            <Divider />
+            <View style={{padding: 20}}>
+              <Text style={{fontSize: 22}}>Level</Text>
+              <Text style={{fontSize: 15, color: 'gray'}}>
+                Beginner to Professional Level
+              </Text>
+
+              <MultiSlider
+                values={[minLevel, maxLevel]}
+                sliderLength={280}
+                onValuesChange={values => {
+                  setMinLevel(values[0]);
+                  setMaxLevel(values[1]);
+                }}
+                min={1}
+                max={4}
+                step={1}
+                allowOverlap
+                snapped
+                selectedStyle={{
+                  backgroundColor: 'green',
+                }}
+                unselectedStyle={{
+                  backgroundColor: 'silver',
+                }}
+              />
+
+              <Text style={{fontSize: 12, color: 'green'}}>
+                selected {LEVELS[minLevel]} to {LEVELS[maxLevel]}
+              </Text>
+            </View>
+            <Divider />
+            <View style={{padding: 20}}>
+              <Text style={{fontSize: 22}}>Age</Text>
+              <Text style={{fontSize: 15, color: 'gray'}}>
+                0 to 30 years old
+              </Text>
+
+              <MultiSlider
+                values={[minAge, maxAge]}
+                sliderLength={280}
+                onValuesChange={values => {
+                  setMinAge(values[0]);
+                  setMaxAge(values[1]);
+                }}
+                min={5}
+                max={30}
+                step={1}
+                allowOverlap
+                snapped
+                selectedStyle={{
+                  backgroundColor: 'green',
+                }}
+                unselectedStyle={{
+                  backgroundColor: 'silver',
+                }}
+              />
+
+              <Text style={{fontSize: 12, color: 'green'}}>
+                selected {minAge} to {maxAge} years old
+              </Text>
+            </View>
+            <Divider />
+            <Button
+              title={'Confirm'}
+              type="outline"
+              onPress={() => {
+                setVisible(false);
               }}
             />
-
-            <Text style={{fontSize: 12, color: 'green'}}>
-              selected {minCredit} to {maxCredit} credits
-            </Text>
           </View>
-          <Divider />
-          <View style={{padding: 20}}>
-            <Text style={{fontSize: 22}}>Distance</Text>
-            <Text style={{fontSize: 15, color: 'gray'}}>0 to 30 km</Text>
-
-            <MultiSlider
-              values={[minDistance, maxDistance]}
-              sliderLength={280}
-              onValuesChange={values => {
-                setMinDistance(values[0]);
-                setMaxDistance(values[1]);
-              }}
-              min={0}
-              max={30}
-              step={1}
-              allowOverlap
-              snapped
-              selectedStyle={{
-                backgroundColor: 'green',
-              }}
-              unselectedStyle={{
-                backgroundColor: 'silver',
-              }}
-            />
-
-            <Text style={{fontSize: 12, color: 'green'}}>
-              selected {minDistance} to {maxDistance} km
-            </Text>
-          </View>
-          <Divider />
-          <View style={{padding: 20}}>
-            <Text style={{fontSize: 22}}>Hours</Text>
-            <Text style={{fontSize: 15, color: 'gray'}}>0 to 24 o'clock </Text>
-
-            <MultiSlider
-              values={[minHour, maxHour]}
-              sliderLength={280}
-              onValuesChange={values => {
-                setMinHour(values[0]);
-                setMaxHour(values[1]);
-              }}
-              min={0}
-              max={24}
-              step={1}
-              allowOverlap
-              snapped
-              selectedStyle={{
-                backgroundColor: 'green',
-              }}
-              unselectedStyle={{
-                backgroundColor: 'silver',
-              }}
-            />
-
-            <Text style={{fontSize: 12, color: 'green'}}>
-              selected {minHour} to {maxHour} o'clock
-            </Text>
-          </View>
-          <Divider />
-          <View style={{padding: 20}}>
-            <Text style={{fontSize: 22}}>Level</Text>
-            <Text style={{fontSize: 15, color: 'gray'}}>
-              Beginner to Professional Level
-            </Text>
-
-            <MultiSlider
-              values={[minLevel, maxLevel]}
-              sliderLength={280}
-              onValuesChange={values => {
-                setMinLevel(values[0]);
-                setMaxLevel(values[1]);
-              }}
-              min={1}
-              max={4}
-              step={1}
-              allowOverlap
-              snapped
-              selectedStyle={{
-                backgroundColor: 'green',
-              }}
-              unselectedStyle={{
-                backgroundColor: 'silver',
-              }}
-            />
-
-            <Text style={{fontSize: 12, color: 'green'}}>
-              selected {LEVELS[minLevel]} to {LEVELS[maxLevel]}
-            </Text>
-          </View>
-          <Divider />
-          <View style={{padding: 20}}>
-            <Text style={{fontSize: 22}}>Age</Text>
-            <Text style={{fontSize: 15, color: 'gray'}}>0 to 30 years old</Text>
-
-            <MultiSlider
-              values={[minAge, maxAge]}
-              sliderLength={280}
-              onValuesChange={values => {
-                setMinAge(values[0]);
-                setMaxAge(values[1]);
-              }}
-              min={5}
-              max={30}
-              step={1}
-              allowOverlap
-              snapped
-              selectedStyle={{
-                backgroundColor: 'green',
-              }}
-              unselectedStyle={{
-                backgroundColor: 'silver',
-              }}
-            />
-
-            <Text style={{fontSize: 12, color: 'green'}}>
-              selected {minAge} to {maxAge} years old
-            </Text>
-          </View>
-          <Divider />
-          <Button
-            title={'Confirm'}
-            type="outline"
-            onPress={() => {
-              setVisible(false);
-            }}
-          />
-        </View>
         </ScrollView>
       </Overlay>
       <View>
