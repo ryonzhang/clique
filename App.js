@@ -7,6 +7,8 @@
  */
 
 import React from 'react';
+import { enableScreens } from 'react-native-screens';
+import createNativeStackNavigator from 'react-native-screens/createNativeStackNavigator';
 import {
   StyleSheet,
   View,
@@ -54,7 +56,8 @@ import Admin from './app/explorer/details/institution/admin';
 import TabViewExample from './app/experiment/tab';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import DateTimePickerApp from './app/common/components/DateTimePicker';
-const AdminNavigator = createStackNavigator(
+enableScreens();
+const AdminNavigator = createNativeStackNavigator(
   {
     Calendar: {
       screen: Calendar,
@@ -105,7 +108,7 @@ const AdminNavigator = createStackNavigator(
   },
 );
 
-const ProfileNavigator = createStackNavigator(
+const ProfileNavigator = createNativeStackNavigator(
   {
     ClassDetail: {
       screen: ClassDetail,
@@ -158,7 +161,7 @@ const ProfileNavigator = createStackNavigator(
   },
 );
 
-const ExploreNavigator = createStackNavigator(
+const ExploreNavigator = createNativeStackNavigator(
   {
     FeedbackClass: {
       screen: FeedbackClass,
@@ -206,7 +209,7 @@ const ExploreNavigator = createStackNavigator(
   },
 );
 
-const HomeNavigator = createStackNavigator(
+const HomeNavigator = createNativeStackNavigator(
   {
     Home: {
       screen: Home,
@@ -232,7 +235,7 @@ const HomeNavigator = createStackNavigator(
   },
 );
 
-const SettingNavigator = createStackNavigator(
+const SettingNavigator = createNativeStackNavigator(
   {
     Settings: {
       screen: Settings,
@@ -291,7 +294,7 @@ const DrawerNavigator = createDrawerNavigator(
   },
 );
 
-const StarterNavigator = createStackNavigator(
+const StarterNavigator = createNativeStackNavigator(
   {
     Login: {
       screen: Login,

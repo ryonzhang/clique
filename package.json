@@ -39,6 +39,7 @@
     "react-native-qrcode": "^0.2.7",
     "react-native-qrcode-generator": "^1.0.0",
     "react-native-reanimated": "^1.4.0",
+    "react-native-screens": "^2.0.0-alpha.22",
     "react-native-scrollable-tab-view": "^1.0.0",
     "react-native-scrollable-tab-view-forked": "^1.0.9",
     "react-native-scrollable-tab-view-mask-bar": "^1.0.8",
